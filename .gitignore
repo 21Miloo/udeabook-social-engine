@@ -1,0 +1,10 @@
+# Carpetas de compilacion
+build/
+build-*/
+
+# Archivos de usuario de Qt Creator
+CMakeLists.txt.user*
+*.autosave
+
+# Archivos temporales de Word
+~$*
