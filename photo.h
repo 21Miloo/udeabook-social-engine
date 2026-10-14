@@ -8,6 +8,8 @@ class Photo
 {
 public:
     Photo();
+    Photo(const string& path, unsigned long int size, unsigned int likes = 0);
+    Photo(const Photo& other); //constructor of copy
 
 private:
     string path;
