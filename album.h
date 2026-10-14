@@ -11,11 +11,12 @@ class Album
 {
 public:
     Album();
+    Album(const string& name, const string& path, Privacy privacy, User* owner);
 
 private:
     string name;
     string path;
-    Privacy privacy;
+    Privacy privacy;    
     DynamicList<Photo*> photos;
     User *owner;
 };
