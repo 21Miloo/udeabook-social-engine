@@ -21,9 +21,9 @@ DynamicList<T>:: DynamicList(int initialCapacity){
 
     capacity = (initialCapacity > 0) ? initialCapacity : 10;
     size = 0;
-    data = new T(capacity);
+    data = new T[capacity];
 
-};
+}
 
 template <typename T>
 DynamicList<T>::~DynamicList(){
