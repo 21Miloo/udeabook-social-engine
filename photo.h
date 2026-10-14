@@ -11,6 +11,11 @@ public:
     Photo(const string& path, unsigned long int size, unsigned int likes = 0);
     Photo(const Photo& other); //constructor of copy
 
+    string getPath() const;
+    unsigned long int getSize() const;
+    unsigned int getLikes() const;
+    void operator++();
+    void operator--();
 private:
     string path;
     // Date captureDate;
