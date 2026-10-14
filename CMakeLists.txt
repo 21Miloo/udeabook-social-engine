@@ -9,6 +9,7 @@ add_executable(udeabook main.cpp
     DynamicList.h
     photo.h photo.cpp
     privacy.h
+    album.h album.cpp
 )
 
 include(GNUInstallDirs)
