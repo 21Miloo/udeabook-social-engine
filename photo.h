@@ -9,13 +9,13 @@ class Photo
 public:
     Photo();
     Photo(const string& path, unsigned long int size, unsigned int likes = 0);
-    Photo(const Photo& other); //constructor of copy
+    Photo(const Photo& other);  //copy constructor
 
     string getPath() const;
     unsigned long int getSize() const;
     unsigned int getLikes() const;
-    void operator++();
-    void operator--();
+    Photo& operator++();
+    Photo& operator--();
 private:
     string path;
     // Date captureDate;

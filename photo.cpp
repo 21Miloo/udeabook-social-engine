@@ -15,15 +15,16 @@ unsigned long int Photo::getSize() const {return size;}
 
 unsigned int Photo::getLikes() const {return likes;}
 
-// overloaded operators 
+// overloaded operators
 
-void Photo::operator++(){
+Photo& Photo::operator++(){
     likes++;
+    return *this;
 }
 
-void Photo::operator--(){
-    if(likes == 0) return;
-    likes--;
+Photo& Photo::operator--(){
+    if (likes > 0) likes--;
+    return *this;
 }
 
 
