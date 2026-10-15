@@ -15,7 +15,7 @@ void Menu::run(){
         cout<<"4. Administrar mensajes"<<endl;
         cout<<"0. Salir"<<endl;
         cout<<"> ";
-        cin>>option;
+        option = readOption(0, 4);
         switch (option) {
         case 1:cout<<"Administrar amistades"<<endl;
             break;
@@ -31,4 +31,22 @@ void Menu::run(){
             break;
         }
     }while(option != 0);
+}
+
+int Menu::readOption(int min, int max){
+    int num;
+    while(true){
+        cin>>num;
+        if(cin.fail()){
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout<<"Debe ingresar un numero: ";
+        }
+        else if(num < min || num > max){
+            cout<<"Opcion fuera de rango ("<<min<<"-"<<max<<"): ";
+        }
+        else{
+            return num;
+        }
+    }
 }
