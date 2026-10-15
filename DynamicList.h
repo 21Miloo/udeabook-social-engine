@@ -14,6 +14,11 @@ private:
 
 public:
     DynamicList(int initialCapacity =10); // Constructor. por defecto se crea con una capacidad de 10 valores.
+
+    DynamicList(const DynamicList<T>& other); // Constructor de copia
+    DynamicList<T> &operator=(const DynamicList<T>& other); // Asignacion - Operator
+
+
     ~DynamicList(); // Destructor
 
     void add(const T& element); // agrega al final
@@ -34,6 +39,40 @@ DynamicList<T>:: DynamicList(int initialCapacity){
     data = new T[capacity];
 
 }
+
+// Implementacion del Constructor de Copia
+template <typename T>
+DynamicList<T>:: DynamicList(const DynamicList<T>& other){
+    capacity = other.capacity;
+    size = other.size;
+    data = new T[capacity];
+
+    for (int i = 0; i < size; ++i) {
+        data[i] = other.data[i];
+    }
+
+}
+
+// Implementacion del Operator=
+template <typename T>
+DynamicList<T> &DynamicList<T>:: operator=(const DynamicList<T>& other){
+
+    if(this == &other){
+        return *this;
+    }
+
+    delete[] data;
+    capacity = other.capacity;
+    size = other.size;
+    data = new T[capacity];
+
+    for (int i = 0; i < size; ++i) {
+        data[i] = other.data[i];
+    }
+
+    return *this;
+}
+
 
 // Implementacion del Destructor
 template <typename T>
