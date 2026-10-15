@@ -21,6 +21,9 @@ public:
     ~DynamicList(); // Destructor
 
     void add(const T& element); // agrega al final
+
+    void clear(); // vacia la lista
+
     int getSize() const; // cuantos elementos tiene. const es para asegurar que el metodo no modifica la lista, solo la consulta.
 
     T& operator[](int index); // Esta version de operator nos permite leer y modificar
@@ -32,8 +35,11 @@ public:
 
     void insertAt(int index, const T& element); // pone el elemento en una posicion especifica
 
+    int indexOf(const T& element) const; // dice en qué posición está un elemento, o -1 si no esta
 
+    bool contains(const T& element) const; // dice si está o no (true/false)
 
+    int calculateMemory() const; // cuantos bytes ocupa la lista en memoria (para la medicion de recursos)
 };
 
 // Implementacion del Constructor
@@ -152,34 +158,71 @@ template <typename T>
 void DynamicList<T>::removeAt(int index){
 
     if (index < 0 || index >= size) {
-        throw std::out_of_range("DynamicList: index out of range");
+        throw std::out_of_range("DynamicList: index out of range"); // solo se puede quitar algo que existe (0..size-1)
     }
 
     for (int i = index; i < size - 1; i++) {
-        data[i] = data[i + 1];
+        data[i] = data[i + 1]; // corremos los elementos a la izquierda, el que se quita queda pisado por el siguiente
     }
-    size--;
+    size--; // la ultima casilla queda como basura, ya no se puede acceder a ella
 }
 
+// Metodo que inserta un elemento en una posicion especifica
 template <typename T>
 void DynamicList<T>::insertAt(int index, const T& element)
 {
     if (index < 0 || index > size) {
-        throw std::out_of_range("DynamicList: index out of range");
+        throw std::out_of_range("DynamicList: index out of range"); // aqui index == size si es valido, significa insertar al final
     }
 
     if (size == capacity) {
-        resize();
+        resize(); // si esta lleno agrandamos antes de mover, porque vamos a escribir en data[size]
     }
 
     for (int i = size; i > index; i--) {
-        data[i] = data[i - 1];
+        data[i] = data[i - 1]; // corremos a la derecha empezando por el final para no pisar datos antes de moverlos
     }
 
-    data[index] = element;
+    data[index] = element; // ya quedo libre la posicion index, escribimos el elemento
     size++;
 }
 
+// Metodo que busca un elemento y retorna su posicion
+template <typename T>
+int DynamicList<T>:: indexOf(const T& element) const {
+
+    for (int i = 0; i < size; ++i) {
+        if (data[i] == element) return i; // apenas lo encontramos retornamos, no tiene sentido seguir buscando
+    }
+
+    return -1; // no esta en la lista. -1 nunca es una posicion valida
+}
+
+// Metodo que nos dice si un elemento esta en la lista
+template <typename T>
+bool DynamicList<T>::contains(const T& element) const
+{
+    int index = indexOf(element); // reutilizamos indexOf para no escribir la busqueda dos veces
+
+    if (index != -1) {
+        return true;
+    }
+
+    return false;
+}
+
+// Metodo para vaciar la lista
+template <typename T>
+void DynamicList<T>:: clear(){
+    size = 0; // no liberamos data, la lista debe seguir siendo usable y conserva su capacidad
+}
+
+
+// Metodo que calcula cuantos bytes ocupa la lista
+template <typename T>
+int DynamicList<T>::calculateMemory() const {
+    return sizeof(*this) + capacity * sizeof(T);
+}
 
 
 #endif // DYNAMICLIST_H
