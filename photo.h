@@ -14,8 +14,10 @@ public:
     string getPath() const;
     unsigned long int getSize() const;
     unsigned int getLikes() const;
+    size_t calculateMemory() const;
     Photo& operator++();
     Photo& operator--();
+
 private:
     string path;
     // Date captureDate;

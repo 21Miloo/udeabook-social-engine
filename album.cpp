@@ -1,4 +1,5 @@
 #include "album.h"
+#include "resourcemeter.h"
 
 Album::Album() : name(""), path(""), privacy(PRIVATE), owner(nullptr) {}
 
@@ -47,3 +48,12 @@ bool Album::isVisibleTo(bool isOwner, bool isFriend) const{
     return false;
 }
 
+size_t Album::calculateMemory() const
+{
+    size_t memory = sizeof(*this) + name.capacity() + path.capacity() + photos.calculateMemory() - sizeof(photos);
+    for(int i = 0; i < photos.getSize(); i++){
+        ResourceMeter::add();
+        memory = memory + photos[i]->calculateMemory();
+    }
+    return memory;
+}

@@ -23,6 +23,8 @@ public:
     int photoCount() const;
     Photo* getPhoto(int position) const;
     bool isVisibleTo(bool isOwner, bool isFriend) const;
+    size_t calculateMemory() const;
+
 private:
     string name;
     string path;
