@@ -17,15 +17,27 @@ Date::Date(const Date& other): day(other.day), month(other.month), year(other.ye
 
 }
 
-int Date::getDay() const { return day; }
 
-int Date::getMonth() const { return month; }
+// Getters
+int Date::getDay() const {
+    return day;
+}
 
-int Date::getYear() const { return year; }
+int Date::getMonth() const {
+    return month;
+}
 
-int Date::getHour() const { return hour; }
+int Date::getYear() const {
+    return year;
+}
 
-int Date::getMinute() const { return minute; }
+int Date::getHour() const {
+    return hour;
+}
+
+int Date::getMinute() const {
+    return minute;
+}
 
 // Constructor que convierte un texto "aaaa-mm-dd hh:mm" en una fecha
 Date::Date(const string& text) : Date() {
