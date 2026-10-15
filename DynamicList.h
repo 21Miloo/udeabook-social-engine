@@ -18,7 +18,6 @@ public:
     DynamicList(const DynamicList<T>& other); // Constructor de copia
     DynamicList<T> &operator=(const DynamicList<T>& other); // Asignacion - Operator
 
-
     ~DynamicList(); // Destructor
 
     void add(const T& element); // agrega al final
@@ -28,6 +27,13 @@ public:
     const T& operator[](int index) const; // Esta version de operator solo nos permite leer. (tiene const)
 
     bool isEmpty() const; // nos dice si la lista no tiene elementos. const porque solo consulta
+
+    void removeAt(int index); // Quita un elemento de una posicion (cuando un usuario acepta o rechaza una solicitud de amistad, hay que quitarla de su lista de solicitudes pendientes.)
+
+    void insertAt(int index, const T& element); // pone el elemento en una posicion especifica
+
+
+
 };
 
 // Implementacion del Constructor
@@ -141,6 +147,38 @@ bool DynamicList<T>::isEmpty() const {
     return size == 0; // si no hay elementos guardados retorna true
 }
 
+// Metodo que remueve un elemento de la lista
+template <typename T>
+void DynamicList<T>::removeAt(int index){
+
+    if (index < 0 || index >= size) {
+        throw std::out_of_range("DynamicList: index out of range");
+    }
+
+    for (int i = index; i < size - 1; i++) {
+        data[i] = data[i + 1];
+    }
+    size--;
+}
+
+template <typename T>
+void DynamicList<T>::insertAt(int index, const T& element)
+{
+    if (index < 0 || index > size) {
+        throw std::out_of_range("DynamicList: index out of range");
+    }
+
+    if (size == capacity) {
+        resize();
+    }
+
+    for (int i = size; i > index; i--) {
+        data[i] = data[i - 1];
+    }
+
+    data[index] = element;
+    size++;
+}
 
 
 
