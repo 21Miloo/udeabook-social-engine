@@ -1,6 +1,6 @@
 #include "photo.h"
 
-// construcs
+// constructors
 Photo::Photo() : path(""), size(0), likes(0){}
 
 Photo::Photo(const string& path, unsigned long int size, unsigned int likes): path(path), size(size), likes(likes){}

@@ -60,9 +60,21 @@ void Menu::visitProfileMenu(){
     cout<<"Visitando perfil de "<<userName<<endl;
 
     // TODO: buscar el usuario en la plataforma y verificar que sea amigo (cuando exista User)
-    Album a1("Cartagena2026", "/users/x/" + userName + "/albums/Cartagena2026", PUBLIC, nullptr);
-    Album a2("Familia", "/users/x/" + userName + "/albums/Familia", FRIENDS, nullptr);
+    Album a1("Antioquia", "/users/x/" + userName + "/albums/Antioquia", PUBLIC, nullptr);
+    Album a2("Paseos", "/users/x/" + userName + "/albums/Paseos", FRIENDS, nullptr);
     Album a3("Privado", "/users/x/" + userName + "/albums/Privado", PRIVATE, nullptr);
+
+    a1.addPhoto(new Photo(a1.getPath() + "/Guatape.png", 2048000, 12));
+    a1.addPhoto(new Photo(a1.getPath() + "/PiedraDelPenol.png", 1536000, 4));
+    a1.addPhoto(new Photo(a1.getPath() + "/SantaFe.png", 2870000, 25));
+    a1.addPhoto(new Photo(a1.getPath() + "/Jardin.png", 980000, 7));
+    a1.addPhoto(new Photo(a1.getPath() + "/ParqueArvi.png", 3410000));
+
+    a2.addPhoto(new Photo(a2.getPath() + "/AltoDelChocho.png", 3100000, 10));
+    a2.addPhoto(new Photo(a2.getPath() + "/Itagui.png", 2250000, 6));
+    a2.addPhoto(new Photo(a2.getPath() + "/Bogota.png", 1780000, 3));
+    a2.addPhoto(new Photo(a2.getPath() + "/Envigado.png", 4020000, 18));
+    a2.addPhoto(new Photo(a2.getPath() + "/SanAntonioDePrado.png", 640000, 9));
 
     DynamicList<Album*> albums;
     albums.add(&a1);

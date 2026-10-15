@@ -9,6 +9,7 @@ public:
 
 private:
     int readOption(int min, int max);
+    void visitProfileMenu();
 };
 
 #endif // MENU_H
