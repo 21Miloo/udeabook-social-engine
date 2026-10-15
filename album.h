@@ -22,6 +22,7 @@ public:
     User* getOwner() const;
     int photoCount() const;
     Photo* getPhoto(int position) const;
+    bool isVisibleTo(bool isOwner, bool isFriend) const;
 private:
     string name;
     string path;
