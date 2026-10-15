@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "album.h"
+#include "resourcemeter.h"
 #include <iostream>
 #include <string>
 
@@ -38,6 +39,7 @@ void Menu::run(){
 int Menu::readOption(int min, int max){
     int num;
     while(true){
+        ResourceMeter::add();
         cin>>num;
         if(cin.fail()){
             cin.clear();
@@ -54,6 +56,7 @@ int Menu::readOption(int min, int max){
 }
 
 void Menu::visitProfileMenu(){
+    ResourceMeter::reset();
     string userName;
     cout<<"Nombre de usuario: ";
     cin>>userName;
@@ -84,25 +87,34 @@ void Menu::visitProfileMenu(){
     DynamicList<Album*> visibles;
 
     for(int i = 0; i < albums.getSize(); i++){
+        ResourceMeter::add();
         if(albums[i]->isVisibleTo(false, true)) visibles.add(albums[i]);
     }
 
+    int option = 0;
     if(visibles.getSize() == 0){
         cout<<"Este usuario no tiene albumes visibles"<<endl;
-        return;
+    }
+    else{
+        do{
+            ResourceMeter::add();
+            cout<<"Albumes de "<<userName<<":"<<endl;
+            for(int i = 0; i < visibles.getSize(); i++){
+                ResourceMeter::add();
+                cout<<i + 1<<". "<<visibles[i]->getName()<<" ("<<visibles[i]->photoCount()<<" fotos)"<<endl;
+            }
+            cout<<"0. Volver"<<endl;
+            cout<<"> ";
+            option = readOption(0, visibles.getSize());
+            if(option != 0) showCarousel(visibles[option - 1]);
+        }while(option != 0);
     }
 
-    int option;
-    do{
-        cout<<"Albumes de "<<userName<<":"<<endl;
-        for(int i = 0; i < visibles.getSize(); i++){
-            cout<<i + 1<<". "<<visibles[i]->getName()<<" ("<<visibles[i]->photoCount()<<" fotos)"<<endl;
-        }
-        cout<<"0. Volver"<<endl;
-        cout<<"> ";
-        option = readOption(0, visibles.getSize());
-        if(option != 0) showCarousel(visibles[option - 1]);
-    }while(option != 0);
+
+    size_t memory = sizeof(*this) + sizeof(userName) + userName.capacity() + sizeof(option)
+                    + a1.calculateMemory() + a2.calculateMemory() + a3.calculateMemory()
+                    + albums.calculateMemory() + visibles.calculateMemory();
+    ResourceMeter::report(memory);
 }
 
 void Menu::showCarousel(Album* album){
@@ -118,6 +130,7 @@ void Menu::showCarousel(Album* album){
     int total = album->photoCount();
     int option;
     do{
+        ResourceMeter::add();
         cout << "[Foto "<<photoSelected+1<<"/"<<total<<"]" << endl;
         cout <<album->getPhoto(photoSelected)->getPath() << endl;
 
