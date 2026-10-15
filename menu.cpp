@@ -92,15 +92,64 @@ void Menu::visitProfileMenu(){
         return;
     }
 
-    cout<<"Albumes de "<<userName<<":"<<endl;
-    for(int i = 0; i < visibles.getSize(); i++){
-        cout<<i + 1<<". "<<visibles[i]->getName()<<" ("<<visibles[i]->photoCount()<<" fotos)"<<endl;
-    }
-    cout<<"0. Volver"<<endl;
-    cout<<"> ";
-    int op = readOption(0, visibles.getSize());
-    if(op == 0) return;
+    int option;
+    do{
+        cout<<"Albumes de "<<userName<<":"<<endl;
+        for(int i = 0; i < visibles.getSize(); i++){
+            cout<<i + 1<<". "<<visibles[i]->getName()<<" ("<<visibles[i]->photoCount()<<" fotos)"<<endl;
+        }
+        cout<<"0. Volver"<<endl;
+        cout<<"> ";
+        option = readOption(0, visibles.getSize());
+        if(option != 0) showCarousel(visibles[option - 1]);
+    }while(option != 0);
+}
 
-    Album* chosen = visibles[op - 1];
-    cout<<"Abriendo album "<<chosen->getName()<<endl;
+void Menu::showCarousel(Album* album){
+    if(album == nullptr) return;
+    cout<<"Abriendo album "<<album->getName()<<endl;
+
+    if (album->photoCount() == 0) {
+        cout << "Este album no tiene fotos." << endl;
+        return;
+    }
+
+    short int photoSelected = 0;
+    int total = album->photoCount();
+    int option;
+    do{
+        cout << "[Foto "<<photoSelected+1<<"/"<<total<<"]" << endl;
+        cout <<album->getPhoto(photoSelected)->getPath() << endl;
+
+        cout << "1. Foto anterior" << endl;
+        cout << "2. Siguiente foto" << endl;
+        cout << "3. Dar like" << endl;
+        cout << "4. Quitar like" << endl;
+        cout << "0. Volver" << endl;
+
+        cout << "> ";
+        option = readOption(0, 4);
+
+        switch (option) {
+            case 1:
+                photoSelected = (photoSelected - 1 + total) % total;
+                break;
+            case 2:
+                photoSelected = (photoSelected + 1) % total;
+                break;
+            case 3:
+                ++(*album->getPhoto(photoSelected));
+                cout << "Foto ahora tiene " << album->getPhoto(photoSelected)->getLikes() << " likes." << endl;
+                break;
+            case 4:
+                --(*album->getPhoto(photoSelected));
+                cout << "Foto ahora tiene " << album->getPhoto(photoSelected)->getLikes() << " likes." << endl;
+                break;
+            case 0:
+                cout << "Volviendo al menu de albumes." << endl;
+                break;
+            default:
+                cout << "Opcion invalida." << endl;
+        }
+    }while(option != 0);
 }
