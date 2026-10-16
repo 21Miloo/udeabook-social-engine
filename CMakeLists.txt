@@ -8,7 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(udeabook main.cpp
     DynamicList.h
     date.h date.cpp
-    adjacencymatrix.h adjacencymatrix.cpp)
+    adjacencymatrix.h adjacencymatrix.cpp
+    user.h user.cpp)
 
 include(GNUInstallDirs)
 install(TARGETS udeabook
