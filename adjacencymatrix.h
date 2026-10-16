@@ -16,6 +16,9 @@ private:
 public:
 
     AdjacencyMatrix(int capacity = 10); // Constructor
+    AdjacencyMatrix(const AdjacencyMatrix& other); // Constructor de copia
+    AdjacencyMatrix& operator=(const AdjacencyMatrix& other); // Asignacion
+
     ~AdjacencyMatrix(); // Destructor
 
     int addNode(); // agrega un usuario nuevo y retorna su indice
@@ -25,6 +28,8 @@ public:
     bool areFriends(int i, int j) const; // dice si i y j son amigos. const porque solo consulta
 
     int getN() const; // cuantos nodos hay
+
+    int calculateMemory() const; // cuantos bytes ocupa la matriz (para la medicion de recursos)
 
 };
 

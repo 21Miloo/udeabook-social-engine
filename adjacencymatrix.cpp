@@ -12,6 +12,44 @@ AdjacencyMatrix::AdjacencyMatrix(int capacity){
     }
 }
 
+// Implementacion del Constructor de copia
+AdjacencyMatrix::AdjacencyMatrix(const AdjacencyMatrix& other){
+
+    capacity = other.capacity;
+    n = other.n;
+
+    matrix = new bool*[capacity]; // matriz propia, no compartimos las filas del otro
+    for (int i = 0; i < capacity; i++) {
+        matrix[i] = new bool[capacity];
+        for (int j = 0; j < capacity; j++) {
+            matrix[i][j] = other.matrix[i][j]; // copiamos casilla por casilla
+        }
+    }
+}
+
+// Implementacion del Operator=
+AdjacencyMatrix& AdjacencyMatrix::operator=(const AdjacencyMatrix& other){
+
+    if (this == &other) return *this; // m = m, si liberamos primero perderiamos los datos
+
+    for (int i = 0; i < capacity; i++) {
+        delete[] matrix[i]; // liberamos la matriz vieja igual que en el destructor
+    }
+    delete[] matrix;
+
+    capacity = other.capacity;
+    n = other.n;
+
+    matrix = new bool*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        matrix[i] = new bool[capacity];
+        for (int j = 0; j < capacity; j++) {
+            matrix[i][j] = other.matrix[i][j];
+        }
+    }
+    return *this;
+}
+
 // Implementacion del Destructor
 AdjacencyMatrix::~AdjacencyMatrix(){
 
@@ -78,4 +116,11 @@ bool AdjacencyMatrix::areFriends(int i, int j) const {
 int AdjacencyMatrix::getN() const {
 
     return n;
+}
+
+// Metodo que calcula cuantos bytes ocupa la matriz
+int AdjacencyMatrix::calculateMemory() const {
+    return sizeof(*this)                       // el objeto: puntero + n + capacity
+         + capacity * sizeof(bool*)            // el arreglo de punteros a filas
+         + capacity * capacity * sizeof(bool); // todas las filas
 }
