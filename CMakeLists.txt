@@ -13,6 +13,8 @@ add_executable(udeabook main.cpp
     menu.h menu.cpp
     resourcemeter.h resourcemeter.cpp
     date.h date.cpp
+    adjacencymatrix.h adjacencymatrix.cpp
+    user.h user.cpp
 )
 
 include(GNUInstallDirs)
