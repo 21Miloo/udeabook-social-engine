@@ -1,15 +1,12 @@
 #include "user.h"
 
 // Implementacion del Constructor por defecto
-User::User() : index(-1){
+User::User() : index(-1){ // Un usuario por defecto no tiene fila en la matriz. si alguien usa por error significa que "No esta en ninguna posicion"
 
 }
 
 // Implementacion del Constructor con todos los datos
-User::User(const string& userName, const string& password, const string& email,
-           const string& profilePhotoPath, const string& country, const string& city,
-           const Date& birthDate, const Date& registrationDate, int index)
-    : userName(userName), password(password), email(email),
+User::User(const string& userName, const string& password, const string& email, const string& profilePhotoPath, const string& country, const string& city, const Date& birthDate, const Date& registrationDate, int index): userName(userName), password(password), email(email),
     profilePhotoPath(profilePhotoPath), country(country), city(city),
     birthDate(birthDate), registrationDate(registrationDate), index(index)
 {
