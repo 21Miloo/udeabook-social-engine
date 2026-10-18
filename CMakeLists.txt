@@ -9,7 +9,8 @@ add_executable(udeabook main.cpp
     DynamicList.h
     date.h date.cpp
     adjacencymatrix.h adjacencymatrix.cpp
-    user.h user.cpp)
+    user.h user.cpp
+    udeabook.h udeabook.cpp)
 
 include(GNUInstallDirs)
 install(TARGETS udeabook
