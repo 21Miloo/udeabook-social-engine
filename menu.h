@@ -12,6 +12,7 @@ public:
 private:
     int readOption(int min, int max);
     void visitProfileMenu();
+    void manageFriendshipsMenu();
     void showCarousel(Album* album);
 };
 

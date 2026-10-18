@@ -20,7 +20,7 @@ void Menu::run(){
         cout<<"> ";
         option = readOption(0, 4);
         switch (option) {
-        case 1:cout<<"Administrar amistades"<<endl;
+        case 1:manageFriendshipsMenu();
             break;
         case 2:visitProfileMenu();
             break;
@@ -115,6 +115,26 @@ void Menu::visitProfileMenu(){
                     + a1.calculateMemory() + a2.calculateMemory() + a3.calculateMemory()
                     + albums.calculateMemory() + visibles.calculateMemory();
     ResourceMeter::report(memory);
+}
+
+void Menu::manageFriendshipsMenu(){
+    int option;
+    do{
+        cout<<endl<<"==== Administrar amistades ===="<<endl;
+        cout<<"1. Enviar solicitud de amistad"<<endl;
+        cout<<"2. Ver y aceptar solicitudes recibidas"<<endl;
+        cout<<"0. Volver"<<endl;
+        cout<<"> ";
+        option = readOption(0, 2);
+        switch (option) {
+        case 1:cout<<"Enviar solicitud de amistad"<<endl;
+            break;
+        case 2:cout<<"Solicitudes de amistad"<<endl;
+            break;
+        case 0:cout<<"Volviendo al menu principal"<<endl;
+            break;
+        }
+    }while(option != 0);
 }
 
 void Menu::showCarousel(Album* album){

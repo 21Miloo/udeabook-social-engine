@@ -15,6 +15,7 @@ add_executable(udeabook main.cpp
     date.h date.cpp
     adjacencymatrix.h adjacencymatrix.cpp
     user.h user.cpp
+    message.h message.cpp
 )
 
 include(GNUInstallDirs)
