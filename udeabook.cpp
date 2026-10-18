@@ -100,9 +100,7 @@ bool UdeaBook::loadFriendships(){
         if (a == nullptr || b == nullptr || a == b) continue; // usuario que no existe
         if (areFriends(a, b)) continue; // linea repetida, no la agregamos dos veces a las listas
 
-        friendships.addFriendship(a->getIndex(), b->getIndex()); // la matriz para consultar en O(1)
-        a->addFriend(b); // las listas para recorrer solo los amigos reales
-        b->addFriend(a);
+        makeFriends(a, b);
     }
     return true;
 }
@@ -347,6 +345,47 @@ void UdeaBook::getSuggestions(int k, DynamicList<Suggestion>& res) const {
     }
 }
 
+// Metodo que deja a a y b como amigos en la matriz y en las listas de los dos
+void UdeaBook::makeFriends(User* a, User* b){
+
+    friendships.addFriendship(a->getIndex(), b->getIndex()); // la matriz para consultar en O(1)
+    a->addFriend(b); // las listas para recorrer solo los amigos reales
+    b->addFriend(a);
+}
+
+
+// Metodo que envia una solicitud de amistad del usuario actual a "to"
+RequestResult UdeaBook::sendRequest(User* to){
+
+    User* me = currentUser;
+
+    if (to == me) return REQUEST_TO_MYSELF;                    // nadie se puede enviar solicitud a si mismo
+    if (areFriends(me, to)) return REQUEST_ALREADY_FRIENDS;    // ya son amigos
+    if (me->hasSentRequestTo(to)) return REQUEST_ALREADY_SENT; // no repetimos la misma solicitud
+    if (me->hasRequestFrom(to)) return REQUEST_PENDING_FROM_THEM; // el otro ya me la envio, toca aceptarla
+
+    to->receiveRequest(me); // queda en las recibidas de "to" y en las enviadas mias
+    return REQUEST_SENT;
+}
+
+// Metodo que acepta la solicitud que "from" le envio al usuario actual
+bool UdeaBook::acceptRequest(User* from){
+
+    if (!currentUser->hasRequestFrom(from)) return false; // no hay solicitud de ese usuario
+
+    currentUser->removeRequest(from); // sale de mis recibidas y de las enviadas de from
+    makeFriends(currentUser, from);
+    return true;
+}
+
+// Metodo que rechaza la solicitud que "from" le envio al usuario actual
+bool UdeaBook::rejectRequest(User* from){
+
+    if (!currentUser->hasRequestFrom(from)) return false;
+
+    currentUser->removeRequest(from); // solo se borra la solicitud, no se crea la amist
+    return true;
+}
 
 
 

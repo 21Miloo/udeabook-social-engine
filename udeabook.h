@@ -10,6 +10,9 @@
 
 using namespace std;
 
+// Resultado de enviar una solicitud de amistad, los vamos a restringir a un enum
+enum RequestResult { REQUEST_SENT, REQUEST_TO_MYSELF, REQUEST_ALREADY_FRIENDS, REQUEST_ALREADY_SENT, REQUEST_PENDING_FROM_THEM };
+
 class UdeaBook{
 
 private:
@@ -30,6 +33,9 @@ private:
     bool loadUsers();
     bool loadFriendships();
     bool loadRequests();
+
+    // marca la amistad de la matriz y en las 2 listas
+    void makeFriends(User* a, User* b);
 
     int findUserIndex(const string& userName) const; // busqueda binaria, -1 si no esta
 
@@ -71,6 +77,11 @@ public:
     // Mejores amigos
     void getBestFriends(DynamicList<User*>& res);
     bool updateBestFriends(DynamicList<User*>& res);
+
+    // Solicitudes de amistad
+    RequestResult sendRequest(User* to);
+    bool acceptRequest(User* from);
+    bool rejectRequest(User* from);
 
     // sugerencias de amistad
     void getSuggestions(int f, DynamicList<Suggestion>& res) const;
