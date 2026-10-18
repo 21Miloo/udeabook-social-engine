@@ -17,6 +17,7 @@ add_executable(udeabook main.cpp
     user.h user.cpp
     message.h message.cpp
     suggestion.h suggestion.cpp
+    udeabook.h udeabook.cpp
 )
 
 include(GNUInstallDirs)
