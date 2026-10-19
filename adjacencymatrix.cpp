@@ -1,4 +1,5 @@
 #include "adjacencymatrix.h"
+#include "resourcemeter.h"
 
 // Implementacion del Constructor
 AdjacencyMatrix::AdjacencyMatrix(int capacity){
@@ -8,6 +9,7 @@ AdjacencyMatrix::AdjacencyMatrix(int capacity){
 
     matrix = new bool*[this->capacity]; // arreglo de punteros, uno por fila
     for (int i = 0; i < this->capacity; i++) {
+        ResourceMeter::add();
         matrix[i] = new bool[this->capacity](); // cada fila, () la llena en false para que no quede basura
     }
 }
@@ -20,8 +22,10 @@ AdjacencyMatrix::AdjacencyMatrix(const AdjacencyMatrix& other){
 
     matrix = new bool*[capacity]; // matriz propia, no compartimos las filas del otro
     for (int i = 0; i < capacity; i++) {
+        ResourceMeter::add();
         matrix[i] = new bool[capacity];
         for (int j = 0; j < capacity; j++) {
+            ResourceMeter::add();
             matrix[i][j] = other.matrix[i][j]; // copiamos casilla por casilla
         }
     }
@@ -33,6 +37,7 @@ AdjacencyMatrix& AdjacencyMatrix::operator=(const AdjacencyMatrix& other){
     if (this == &other) return *this; // m = m, si liberamos primero perderiamos los datos
 
     for (int i = 0; i < capacity; i++) {
+        ResourceMeter::add();
         delete[] matrix[i]; // liberamos la matriz vieja igual que en el destructor
     }
     delete[] matrix;
@@ -42,8 +47,10 @@ AdjacencyMatrix& AdjacencyMatrix::operator=(const AdjacencyMatrix& other){
 
     matrix = new bool*[capacity];
     for (int i = 0; i < capacity; i++) {
+        ResourceMeter::add();
         matrix[i] = new bool[capacity];
         for (int j = 0; j < capacity; j++) {
+            ResourceMeter::add();
             matrix[i][j] = other.matrix[i][j];
         }
     }
@@ -54,6 +61,7 @@ AdjacencyMatrix& AdjacencyMatrix::operator=(const AdjacencyMatrix& other){
 AdjacencyMatrix::~AdjacencyMatrix(){
 
     for (int i = 0; i < capacity; i++) {
+        ResourceMeter::add();
         delete[] matrix[i]; // primero cada fila
     }
     delete[] matrix; // despues el arreglo de punteros, si fuera primero perderiamos las filas
@@ -64,16 +72,20 @@ void AdjacencyMatrix::resize(int newCapacity){
 
     bool** newMatrix = new bool*[newCapacity];
     for (int i = 0; i < newCapacity; i++) {
+        ResourceMeter::add();
         newMatrix[i] = new bool[newCapacity](); // matriz nueva toda en false
     }
 
     for (int i = 0; i < n; i++) {
+        ResourceMeter::add();
         for (int j = 0; j < n; j++) {
+            ResourceMeter::add();
             newMatrix[i][j] = matrix[i][j]; // copiamos solo la parte que esta en uso (n x n)
         }
     }
 
     for (int i = 0; i < capacity; i++) {
+        ResourceMeter::add();
         delete[] matrix[i]; // liberamos la vieja igual que en el destructor
     }
     delete[] matrix;

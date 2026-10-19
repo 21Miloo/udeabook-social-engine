@@ -12,6 +12,8 @@ class Album
 public:
     Album();
     Album(const string& name, const string& path, Privacy privacy, User* owner);
+    Album(const Album& other);
+    Album& operator=(const Album& other);
     //destructor
     ~Album();
 

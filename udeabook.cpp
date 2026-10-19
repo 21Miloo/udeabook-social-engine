@@ -1,6 +1,7 @@
 #include "udeabook.h"
 #include <fstream>
 #include <iostream>
+#include "resourcemeter.h"
 
 // Implementacion del Constructor
 UdeaBook::UdeaBook(const string& dataPath, const string& basePath): currentUser(nullptr), dataPath(dataPath), basePath(basePath), photosUpdated(false), randomGenerator(random_device{}())
@@ -11,9 +12,11 @@ UdeaBook::UdeaBook(const string& dataPath, const string& basePath): currentUser(
 UdeaBook::~UdeaBook(){
 
     for (int i = 0; i < users.getSize(); i++) {
+        ResourceMeter::add();
         delete users[i]; // UdeaBook creo cada usuario con new, entonces UdeaBook los borra
     }
     for (int i = 0; i < messages.getSize(); i++) {
+        ResourceMeter::add();
         delete messages[i]; // los mensajes tambien los crea UdeaBook
     }
     // la lista y la matriz se liberan solas con sus propios destructores
@@ -34,6 +37,7 @@ int UdeaBook::splitLine(const string& line, string* fields, int maxFields){
     size_t start = 0;
 
     while (count < maxFields - 1) {
+        ResourceMeter::add();
         size_t pos = line.find('|', start);
         if (pos == string::npos) break; // ya no hay mas separadores
 
@@ -66,6 +70,7 @@ bool UdeaBook::loadUsers(){
 
     string fields[7];
     while (getline(file, line)) {
+        ResourceMeter::add();
         cleanLine(line);
         if (line.empty()) continue;
         if (splitLine(line, fields, 7) != 7) continue; // linea mal formada, la saltamos
@@ -95,6 +100,7 @@ bool UdeaBook::loadFriendships(){
     string line;
     string fields[2];
     while (getline(file, line)) {
+        ResourceMeter::add();
         cleanLine(line);
         if (line.empty() || splitLine(line, fields, 2) != 2) continue;
 
@@ -117,6 +123,7 @@ bool UdeaBook::loadRequests(){
     string line;
     string fields[2];
     while (getline(file, line)) {
+        ResourceMeter::add();
         cleanLine(line);
         if (line.empty() || splitLine(line, fields, 2) != 2) continue;
 
@@ -147,6 +154,7 @@ int UdeaBook::findUserIndex(const string& userName) const {
     int high = users.getSize() - 1;
 
     while (low <= high) {
+        ResourceMeter::add();
         int mid = low + (high - low) / 2; // asi no se desborda si low + high fuera muy grande
         const string& name = users[mid]->getUserName();
 
@@ -216,6 +224,7 @@ int UdeaBook::countCommonFriends(User* a, User* b) const {
     const DynamicList<User*>& friendsA = a ->getFriends(); // referencia, no copiamos la lista (Esta operacion nos ahorra memoria)
 
     for (int i = 0; i < friendsA.getSize(); ++i) {
+        ResourceMeter::add();
 
         if (areFriends(friendsA[i], b)) count ++; // El amigo de A tambien es amigo de B
 
@@ -247,6 +256,7 @@ void UdeaBook:: selectWeighted(int f, const DynamicList<User*>& excluded, Dynami
     int totalWeight = 0;
 
     for(int i = 0; i <total; i++){
+        ResourceMeter::add();
 
         if (excluded.contains(friends[i])) {
             weights[i] = 0; // le damos peso 0 por lo tanto nunca saldria peso // 0 = nunca sale
@@ -258,12 +268,14 @@ void UdeaBook:: selectWeighted(int f, const DynamicList<User*>& excluded, Dynami
     }
 
     for (int chosen = 0; chosen < f && totalWeight > 0; ++chosen) {
+        ResourceMeter::add();
 
         uniform_int_distribution<int> range(0, totalWeight - 1);
         int r = range(randomGenerator); // numero al azar entre 0 y totalWeight - 1
 
         int accumulated = 0;
         for (int i = 0; i < total; i++) {
+            ResourceMeter::add();
             accumulated += weights[i];
             if (r < accumulated) {         // r cayo en el "pedazo" de este amigo
                 res.add(friends[i]);
@@ -318,9 +330,11 @@ void UdeaBook::getSuggestions(int k, DynamicList<Suggestion>& res) const {
 
     const DynamicList<User*>& myFriends = me->getFriends();
     for (int i = 0; i < myFriends.getSize(); i++) {
+        ResourceMeter::add();
 
         const DynamicList<User*>& friendsOfFriend = myFriends[i]->getFriends();
         for (int j = 0; j < friendsOfFriend.getSize(); j++) {
+            ResourceMeter::add();
 
             User* candidate = friendsOfFriend[j];
             if (candidate == me || areFriends(me, candidate)) continue; // yo o alguien que ya es mi amigo
@@ -332,14 +346,17 @@ void UdeaBook::getSuggestions(int k, DynamicList<Suggestion>& res) const {
 
     DynamicList<Suggestion> all(candidates.getSize());
     for (int i = 0; i < candidates.getSize(); i++) {
+        ResourceMeter::add();
         all.add(Suggestion(candidates[i], common[candidates[i]->getIndex()]));
     }
     delete[] common;
 
     // seleccion parcial: solo ordenamos los k primeros, no toda la lista
     for (int i = 0; i < k && i < all.getSize(); i++) {
+        ResourceMeter::add();
         int best = i;
         for (int j = i + 1; j < all.getSize(); j++) {
+            ResourceMeter::add();
             if (all[j] > all[best]) best = j; // operator> de Suggestion compara los amigos en comun
         }
         Suggestion temp = all[i];
@@ -398,9 +415,11 @@ bool UdeaBook::saveFriendships() const {
     if (!file.is_open()) return false;
 
     for (int i = 0; i < users.getSize(); i++) {
+        ResourceMeter::add();
         const DynamicList<User*>& friends = users[i]->getFriends();
 
         for (int j = 0; j < friends.getSize(); j++) {
+            ResourceMeter::add();
             if (friends[j]->getIndex() > i) { // cada pareja una sola vez: solo cuando el amigo va despues de mi
                 file << users[i]->getUserName() << "|" << friends[j]->getUserName() << '\n';
             }
@@ -416,9 +435,11 @@ bool UdeaBook::saveRequests() const {
     if (!file.is_open()) return false;
 
     for (int i = 0; i < users.getSize(); i++) {
+        ResourceMeter::add();
         const DynamicList<User*>& received = users[i]->getReceivedRequests();
 
         for (int j = 0; j < received.getSize(); j++) {
+            ResourceMeter::add();
             file << received[j]->getUserName() << "|" << users[i]->getUserName() << '\n'; // formato: sender|receiver
         }
     }
@@ -454,6 +475,7 @@ bool UdeaBook::loadMessages(){
     string line;
     string fields[5];
     while (getline(file, line)) {
+        ResourceMeter::add();
         cleanLine(line);
         if (line.empty() || splitLine(line, fields, 5) != 5) continue; // el texto es el ultimo campo, puede tener |
 
@@ -476,6 +498,7 @@ bool UdeaBook::saveMessages() const {
     if (!file.is_open()) return false;
 
     for (int i = 0; i < messages.getSize(); i++) {
+        ResourceMeter::add();
         const Message* m = messages[i];
         file << m->getSender()->getUserName() << "|" << m->getReceiver()->getUserName() << "|"
              << m->getSentDate() << "|" << (m->isRead() ? 1 : 0) << "|" << m->getText() << '\n'; // el texto de ultimo
@@ -499,6 +522,7 @@ void UdeaBook::getConversation(User* other, DynamicList<Message*>& res){
     User* me = currentUser;
 
     for (int i = 0; i < messages.getSize(); i++) {
+        ResourceMeter::add();
         Message* m = messages[i];
 
         bool sentByMe = (m->getSender() == me && m->getReceiver() == other);
@@ -516,6 +540,7 @@ int UdeaBook::countUnreadFrom(User* from) const {
 
     int count = 0;
     for (int i = 0; i < messages.getSize(); i++) {
+        ResourceMeter::add();
         const Message* m = messages[i];
         if (m->getSender() == from && m->getReceiver() == currentUser && !m->isRead()) count++;
     }
@@ -527,7 +552,49 @@ int UdeaBook::countUnreadMessages() const {
 
     int count = 0;
     for (int i = 0; i < messages.getSize(); i++) {
+        ResourceMeter::add();
         if (messages[i]->getReceiver() == currentUser && !messages[i]->isRead()) count++;
     }
     return count;
+}
+
+// Metodo que entrega los mensajes no leidos del usuario actual (ya ordenados por fecha) y los marca como leidos
+void UdeaBook::readNewMessages(DynamicList<Message*>& res){
+    for(int i = 0; i < messages.getSize(); i++){
+        ResourceMeter::add();
+        Message* message = messages[i];
+        if(message->getReceiver() == currentUser && !message->isRead()){
+            res.add(message);
+            message->markAsRead();
+        }
+    }
+}
+
+// Metodo que entrega los mensajes recibidos por el usuario actual entre start y end (ambas inclusive)
+void UdeaBook::searchMessagesByRange(const Date& start, const Date& end, DynamicList<Message*>& res) const{
+    for(int i = 0; i < messages.getSize(); i++){
+        ResourceMeter::add();
+        Message* message = messages[i];
+        if(message->getReceiver() == currentUser
+            && start <= message->getSentDate() && message->getSentDate() <= end){
+            res.add(message);
+        }
+    }
+}
+
+// Metodo que suma la memoria de todas las estructuras y objetos de la plataforma
+size_t UdeaBook::calculateTotalMemory() const{
+    size_t memory = sizeof(*this) + dataPath.capacity() + basePath.capacity()
+                  + users.calculateMemory() - sizeof(users)              // sizeof(*this) ya conto los objetos lista y matriz
+                  + messages.calculateMemory() - sizeof(messages)
+                  + showBestFriends.calculateMemory() - sizeof(showBestFriends)
+                  + friendships.calculateMemory() - sizeof(friendships);
+
+    for(int i = 0; i < users.getSize(); i++){
+        memory = memory + users[i]->calculateMemory();
+    }
+    for(int i = 0; i < messages.getSize(); i++){
+        memory = memory + messages[i]->calculateMemory();
+    }
+    return memory;
 }

@@ -70,3 +70,14 @@ ostream& operator<<(ostream& out, const User& user) {
     out << user.userName << " (" << user.city << ", " << user.country << ")";
     return out;
 }
+
+// Metodo que calcula los bytes del usuario: el objeto, las letras de sus textos y los arreglos de sus listas
+// Los usuarios a los que apuntan las listas no se suman aqui, cada uno se cuenta una sola vez en UdeaBook
+size_t User::calculateMemory() const {
+    return sizeof(*this)
+         + userName.capacity() + password.capacity() + email.capacity()
+         + profilePhotoPath.capacity() + country.capacity() + city.capacity()
+         + friends.calculateMemory() - sizeof(friends)                    // sizeof(*this) ya conto el objeto lista
+         + receivedRequests.calculateMemory() - sizeof(receivedRequests)
+         + sentRequests.calculateMemory() - sizeof(sentRequests);
+}

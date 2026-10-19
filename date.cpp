@@ -1,6 +1,7 @@
 #include "date.h"
 #include <iomanip>
 #include <chrono>
+#include "resourcemeter.h"
 
 Date::Date(): day(1), month(1), year(1971), hour(0), minute(0){
 
@@ -105,6 +106,7 @@ Date Date::now(){
 
     int y = 1970;
     while (days >= (isLeapYear(y) ? 366 : 365)) { // quitamos años completos
+        ResourceMeter::add();
         days -= isLeapYear(y) ? 366 : 365;
         y++;
     }
@@ -114,6 +116,7 @@ Date Date::now(){
 
     int m = 0;
     while (days >= monthDays[m]) { // quitamos meses completos
+        ResourceMeter::add();
         days -= monthDays[m];
         m++;
     }

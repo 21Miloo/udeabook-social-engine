@@ -100,9 +100,14 @@ public:
     void getConversation(User* other, DynamicList<Message*>& res);
     int countUnreadFrom(User* from) const;
     int countUnreadMessages() const;
+    void readNewMessages(DynamicList<Message*>& res);
+    void searchMessagesByRange(const Date& start, const Date& end, DynamicList<Message*>& res) const;
 
     // sugerencias de amistad
     void getSuggestions(int f, DynamicList<Suggestion>& res) const;
+
+    // Medicion de recursos: bytes de TODO lo que existe en la plataforma en este momento
+    size_t calculateTotalMemory() const;
 
 };
 
