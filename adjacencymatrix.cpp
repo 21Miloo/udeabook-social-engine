@@ -94,6 +94,25 @@ void AdjacencyMatrix::resize(int newCapacity){
     capacity = newCapacity;
 }
 
+// Metodo que reserva espacio para newCapacity nodos sin copiar nada (solo sirve si la matriz esta vacia)
+void AdjacencyMatrix::reserve(int newCapacity){
+
+    if (n > 0 || newCapacity <= capacity) return; // si ya hay nodos o ya cabe, no hacemos nada
+
+    for (int i = 0; i < capacity; i++) {
+        ResourceMeter::add();
+        delete[] matrix[i]; // liberamos la matriz vieja igual que en el destructor
+    }
+    delete[] matrix;
+
+    capacity = newCapacity;
+    matrix = new bool*[capacity];
+    for (int i = 0; i < capacity; i++) {
+        ResourceMeter::add();
+        matrix[i] = new bool[capacity](); // filas nuevas en false, no hay nada que copiar
+    }
+}
+
 // Metodo que agrega un nodo (usuario) y retorna su indice
 int AdjacencyMatrix::addNode(){
 

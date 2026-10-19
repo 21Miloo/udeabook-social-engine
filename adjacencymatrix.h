@@ -21,6 +21,8 @@ public:
 
     ~AdjacencyMatrix(); // Destructor
 
+    void reserve(int newCapacity); // deja la matriz vacia con espacio para newCapacity nodos
+
     int addNode(); // agrega un usuario nuevo y retorna su indice
 
     void addFriendship(int i, int j); // marca a i y j como amigos
