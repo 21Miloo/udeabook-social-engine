@@ -34,12 +34,19 @@ private:
     DynamicList<User*> receivedRequests; // Solicitudes pendientes que me enviaron
     DynamicList<User*> sentRequests; // solicitudes pendientes que yo envie
 
+    DynamicList<Album*> albums; // albumes del usuario. User es el dueño, los borra en el destructor
+
 public:
 
     // Constructores
     User();
 
     User(const string& userName, const string& password, const string& email, const string& profilePhotoPath, const string& country, const string& city, const Date& birthDate, const Date& registrationDate, int index);
+
+    ~User(); // Destructor
+
+    User(const User& other) = delete;            // no se copia un usuario: la copia borraria los mismos albumes
+    User& operator=(const User& other) = delete;
 
     //Getters
     const string& getUserName() const;
@@ -71,6 +78,11 @@ public:
     bool hasRequestFrom(User* u) const; // tengo un solicitud de:
     bool hasSentRequestTo(User* u) const; // Envie una solicitud A:
     void removeRequest(User* u);  // Eliminar la solicitud de U hacia a mi (esta es una operacion en los 2 sentidos)
+
+    // Albumes
+    void addAlbum(Album* album);
+    const DynamicList<Album*>& getAlbums() const;
+    Album* findAlbum(const string& name) const; // nullptr si no tiene un album con ese nombre
 
 
     // Operadores

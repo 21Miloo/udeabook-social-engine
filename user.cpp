@@ -1,4 +1,6 @@
 #include "user.h"
+#include "album.h"
+#include "resourcemeter.h"
 
 // Implementacion del Constructor por defecto
 User::User() : index(-1){ // Un usuario por defecto no tiene fila en la matriz. si alguien usa por error significa que "No esta en ninguna posicion"
@@ -10,6 +12,15 @@ User::User(const string& userName, const string& password, const string& email, 
     profilePhotoPath(profilePhotoPath), country(country), city(city),
     birthDate(birthDate), registrationDate(registrationDate), index(index)
 {
+}
+
+// Implementacion del Destructor
+User::~User(){
+
+    for (int i = 0; i < albums.getSize(); i++) {
+        ResourceMeter::add();
+        delete albums[i]; // cada album borra sus fotos en su propio destructor
+    }
 }
 
 // Getters
@@ -60,6 +71,23 @@ void User::removeRequest(User* u) {
     if (pos != -1) u->sentRequests.removeAt(pos); // tambien sale de las enviadas de u
 }
 
+// Metodo que agrega un album al usuario (desde aqui el usuario es el dueño del album)
+void User::addAlbum(Album* album) {
+    if (album != nullptr) albums.add(album);
+}
+
+const DynamicList<Album*>& User::getAlbums() const { return albums; }
+
+// Metodo que busca un album del usuario por su nombre
+Album* User::findAlbum(const string& name) const {
+
+    for (int i = 0; i < albums.getSize(); i++) {
+        ResourceMeter::add();
+        if (albums[i]->getName() == name) return albums[i];
+    }
+    return nullptr;
+}
+
 // Operador == que compara dos usuarios por su nombre (es unico)
 bool User::operator==(const User& other) const {
     return userName == other.userName;
@@ -73,11 +101,18 @@ ostream& operator<<(ostream& out, const User& user) {
 
 // Metodo que calcula los bytes del usuario: el objeto, las letras de sus textos y los arreglos de sus listas
 // Los usuarios a los que apuntan las listas no se suman aqui, cada uno se cuenta una sola vez en UdeaBook
+// Los albumes si se suman porque son del usuario
 size_t User::calculateMemory() const {
-    return sizeof(*this)
+    size_t memory = sizeof(*this)
          + userName.capacity() + password.capacity() + email.capacity()
          + profilePhotoPath.capacity() + country.capacity() + city.capacity()
          + friends.calculateMemory() - sizeof(friends)                    // sizeof(*this) ya conto el objeto lista
          + receivedRequests.calculateMemory() - sizeof(receivedRequests)
-         + sentRequests.calculateMemory() - sizeof(sentRequests);
+         + sentRequests.calculateMemory() - sizeof(sentRequests)
+         + albums.calculateMemory() - sizeof(albums);
+
+    for (int i = 0; i < albums.getSize(); i++) {
+        memory = memory + albums[i]->calculateMemory(); // cada album suma sus fotos
+    }
+    return memory;
 }

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "resourcemeter.h"
+#include "album.h"
 
 // Implementacion del Constructor
 UdeaBook::UdeaBook(const string& dataPath, const string& basePath): currentUser(nullptr), dataPath(dataPath), basePath(basePath), photosUpdated(false), randomGenerator(random_device{}())
@@ -144,6 +145,8 @@ bool UdeaBook::loadData(){
     if (!loadFriendships()) return false;
     if (!loadRequests()) return false;
     if (!loadMessages()) return false;
+    if (!loadAlbums()) return false;
+    if (!loadPhotos()) return false; // despues de los albumes, cada foto va dentro de uno
     return true;
 }
 
@@ -463,6 +466,10 @@ bool UdeaBook::saveData() const {
         cout << "No se pudo guardar " << dataPath << "messages.txt" << endl;
         ok = false;
     }
+    if (!savePhotos()) {
+        cout << "No se pudo guardar " << dataPath << "photos.txt" << endl;
+        ok = false;
+    }
     return ok;
 }
 
@@ -597,4 +604,104 @@ size_t UdeaBook::calculateTotalMemory() const{
         memory = memory + messages[i]->calculateMemory();
     }
     return memory;
+}
+
+// Metodo que convierte el texto del archivo en la privacidad del album
+bool UdeaBook::textToPrivacy(const string& text, Privacy& privacy){
+
+    if (text == "PUBLIC")  { privacy = PUBLIC;  return true; }
+    if (text == "PRIVATE") { privacy = PRIVATE; return true; }
+    if (text == "FRIENDS") { privacy = FRIENDS; return true; }
+    return false; // texto invalido, el album no se carga
+}
+
+// Metodo que dice si un texto es un numero entero positivo (para no romper stoi con datos mal escritos)
+bool UdeaBook::isNumber(const string& text){
+
+    if (text.empty()) return false;
+    for (size_t i = 0; i < text.length(); i++) {
+        if (text[i] < '0' || text[i] > '9') return false;
+    }
+    return true;
+}
+
+// Metodo que carga albums.txt
+bool UdeaBook::loadAlbums(){
+
+    ifstream file(dataPath + "albums.txt");
+    if (!file.is_open()) return true; // sin archivo nadie tiene albumes
+
+    string line;
+    string fields[3];
+    while (getline(file, line)) {
+        ResourceMeter::add();
+        cleanLine(line);
+        if (line.empty() || splitLine(line, fields, 3) != 3) continue;
+
+        User* owner = findUser(fields[0]);
+        Privacy privacy;
+        if (owner == nullptr || !textToPrivacy(fields[2], privacy)) continue;
+        if (owner->findAlbum(fields[1]) != nullptr) continue; // un usuario no puede tener dos albumes con el mismo nombre
+
+        string path = basePath + "/" + owner->getUserName() + "/albums/" + fields[1]; // la ruta se deduce, no se guarda
+        owner->addAlbum(new Album(fields[1], path, privacy, owner));
+    }
+    return true;
+}
+
+// Metodo que carga photos.txt
+bool UdeaBook::loadPhotos(){
+
+    ifstream file(dataPath + "photos.txt");
+    if (!file.is_open()) return true;
+
+    string line;
+    string fields[6];
+    while (getline(file, line)) {
+        ResourceMeter::add();
+        cleanLine(line);
+        if (line.empty() || splitLine(line, fields, 6) != 6) continue;
+        if (!isNumber(fields[4]) || !isNumber(fields[5])) continue; // tamano y likes deben ser numeros
+
+        User* owner = findUser(fields[0]);
+        if (owner == nullptr) continue;
+        Album* album = owner->findAlbum(fields[1]);
+        if (album == nullptr) continue; // la foto debe estar en un album que exista
+
+        // archivo: owner|albumName|photoName|captureDate|size|likes
+        string path = album->getPath() + "/" + fields[2] + ".png";
+        album->addPhoto(new Photo(path, Date(fields[3]), stoul(fields[4]), stoi(fields[5])));
+    }
+    return true;
+}
+
+// Metodo que guarda photos.txt (se reescribe por los likes)
+bool UdeaBook::savePhotos() const {
+
+    ofstream file(dataPath + "photos.txt");
+    if (!file.is_open()) return false;
+
+    for (int i = 0; i < users.getSize(); i++) {
+        ResourceMeter::add();
+        const DynamicList<Album*>& albums = users[i]->getAlbums();
+
+        for (int a = 0; a < albums.getSize(); a++) {
+            ResourceMeter::add();
+            Album* album = albums[a];
+
+            for (int p = 0; p < album->photoCount(); p++) {
+                ResourceMeter::add();
+                Photo* photo = album->getPhoto(p);
+
+                // el nombre de la foto es lo que va entre el ultimo / y el .png
+                string path = photo->getPath();
+                size_t start = path.rfind('/') + 1;
+                string photoName = path.substr(start, path.length() - start - 4);
+
+                file << users[i]->getUserName() << "|" << album->getName() << "|" << photoName << "|"
+                     << photo->getCaptureDate() << "|" << photo->getSize() << "|" << photo->getLikes() << '\n';
+            }
+        }
+    }
+    return true;
 }
