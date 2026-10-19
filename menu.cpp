@@ -17,7 +17,7 @@ void Menu::run(){
         ResourceMeter::add();
         cout<<endl<<"==== Bienvenido a UdeaBook ===="<<endl;
         cout<<"1. Administrar amistades"<<endl;
-        cout<<"2. Visitar perfil de un amigo"<<endl;
+        cout<<"2. Visitar perfil de un usuario"<<endl;
         cout<<"3. Ver sugerencias de amistad"<<endl;
         cout<<"4. Administrar mensajes"<<endl;
         cout<<"0. Salir"<<endl;
@@ -64,36 +64,34 @@ void Menu::visitProfileMenu(){
     string userName;
     cout<<"Nombre de usuario: ";
     cin>>userName;
-    cout<<"Visitando perfil de "<<userName<<endl;
 
+    User* visited = platform.findUser(userName);
+    if(visited == nullptr){
+        cout<<"El usuario "<<userName<<" no existe"<<endl;
+        reportResources(sizeof(userName) + userName.capacity() + sizeof(visited));
+        return;
+    }
 
-    Album a1("Antioquia", "/users/x/" + userName + "/albums/Antioquia", PUBLIC, nullptr);
-    Album a2("Paseos", "/users/x/" + userName + "/albums/Paseos", FRIENDS, nullptr);
-    Album a3("Privado", "/users/x/" + userName + "/albums/Privado", PRIVATE, nullptr);
+    User* me = platform.getCurrentUser();
+    bool isOwner = (visited == me);
+    bool isFriend = !isOwner && platform.areFriends(me, visited);
 
-    a1.addPhoto(new Photo(a1.getPath() + "/Guatape.png", Date(12, 1, 2026), 2048000, 12));
-    a1.addPhoto(new Photo(a1.getPath() + "/PiedraDelPenol.png", Date(12, 1, 2026), 1536000, 4));
-    a1.addPhoto(new Photo(a1.getPath() + "/SantaFe.png", Date(3, 4, 2026), 2870000, 25));
-    a1.addPhoto(new Photo(a1.getPath() + "/Jardin.png", Date(20, 6, 2026), 980000, 7));
-    a1.addPhoto(new Photo(a1.getPath() + "/ParqueArvi.png", Date(15, 8, 2026), 3410000));
+    cout<<"Visitando perfil de "<<*visited;
+    if(isOwner) cout<<" (tu perfil)";
+    else if(isFriend) cout<<" (amigo)";
+    cout<<endl;
+    cout<<"Foto de perfil: "<<visited->getProfilePhotoPath()<<endl;
 
-    a2.addPhoto(new Photo(a2.getPath() + "/AltoDelChocho.png", Date(7, 2, 2026), 3100000, 10));
-    a2.addPhoto(new Photo(a2.getPath() + "/Itagui.png", Date(14, 3, 2026), 2250000, 6));
-    a2.addPhoto(new Photo(a2.getPath() + "/Bogota.png", Date(30, 5, 2026), 1780000, 3));
-    a2.addPhoto(new Photo(a2.getPath() + "/Envigado.png", Date(19, 7, 2026), 4020000, 18));
-    a2.addPhoto(new Photo(a2.getPath() + "/SanAntonioDePrado.png", Date(2, 9, 2026), 640000, 9));
-
-    DynamicList<Album*> albums;
-    albums.add(&a1);
-    albums.add(&a2);
-    albums.add(&a3);
-
+    // solo se muestran los albumes que la privacidad permite ver
+    const DynamicList<Album*>& albums = visited->getAlbums();
     DynamicList<Album*> visibles;
 
     for(int i = 0; i < albums.getSize(); i++){
         ResourceMeter::add();
-        if(albums[i]->isVisibleTo(false, true)) visibles.add(albums[i]);
+        if(albums[i]->isVisibleTo(isOwner, isFriend)) visibles.add(albums[i]);
     }
+    int hidden = albums.getSize() - visibles.getSize();
+    if(hidden > 0) cout<<hidden<<" album(es) oculto(s) por privacidad"<<endl;
 
     int option = 0;
     if(visibles.getSize() == 0){
@@ -115,9 +113,9 @@ void Menu::visitProfileMenu(){
     }
 
 
-    reportResources(sizeof(userName) + userName.capacity() + sizeof(option)
-                    + a1.calculateMemory() + a2.calculateMemory() + a3.calculateMemory()
-                    + albums.calculateMemory() + visibles.calculateMemory());
+    // los albumes ya estan contados en la memoria de la plataforma, aqui solo lo propio de esta funcionalidad
+    reportResources(sizeof(userName) + userName.capacity() + sizeof(option) + sizeof(visited) + sizeof(me)
+                    + sizeof(isOwner) + sizeof(isFriend) + sizeof(hidden) + visibles.calculateMemory());
 }
 
 void Menu::manageFriendshipsMenu(){
@@ -157,6 +155,8 @@ void Menu::showCarousel(Album* album){
         ResourceMeter::add();
         cout << "[Foto "<<photoSelected+1<<"/"<<total<<"]" << endl;
         cout <<album->getPhoto(photoSelected)->getPath() << endl;
+        cout << "Tomada: " << album->getPhoto(photoSelected)->getCaptureDate()
+             << " | Likes: " << album->getPhoto(photoSelected)->getLikes() << endl;
 
         cout << "1. Foto anterior" << endl;
         cout << "2. Siguiente foto" << endl;

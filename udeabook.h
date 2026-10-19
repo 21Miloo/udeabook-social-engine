@@ -7,6 +7,7 @@
 #include "user.h"
 #include "suggestion.h"
 #include "message.h"
+#include "privacy.h"
 #include <random>
 
 using namespace std;
@@ -39,11 +40,17 @@ private:
     bool loadFriendships();
     bool loadRequests();
     bool loadMessages();
+    bool loadAlbums();
+    bool loadPhotos();
 
     // Guardado de cada archivo
     bool saveFriendships() const;
     bool saveRequests() const;
     bool saveMessages() const;
+    bool savePhotos() const; // los likes son lo unico de las fotos que cambia
+
+    static bool textToPrivacy(const string& text, Privacy& privacy); // "PUBLIC" -> PUBLIC, false si no es valido
+    static bool isNumber(const string& text); // true si el texto son solo digitos
 
     // marca la amistad de la matriz y en las 2 listas
     void makeFriends(User* a, User* b);
