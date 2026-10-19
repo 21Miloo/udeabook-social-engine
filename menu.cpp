@@ -129,9 +129,9 @@ void Menu::manageFriendshipsMenu(){
         cout<<"> ";
         option = readOption(0, 2);
         switch (option) {
-        case 1:cout<<"Enviar solicitud de amistad"<<endl;
+        case 1:sendRequestMenu();
             break;
-        case 2:cout<<"Solicitudes de amistad"<<endl;
+        case 2:acceptRequestsMenu();
             break;
         case 0:cout<<"Volviendo al menu principal"<<endl;
             break;
@@ -204,5 +204,71 @@ bool Menu::loginScreen(){
     }
     cout<<"Usuario o contrasena incorrectos"<<endl;
     return false;
+}
+
+
+void Menu::sendRequestMenu(){
+    string userName;
+    cout<<"Nombre del usuario: ";
+    cin>>userName;
+
+    User* user = platform.findUser(userName);
+    if(user == nullptr){
+        cout<<"Ese usuario no existe"<<endl;
+        return;
+    }
+
+    switch(platform.sendRequest(user)){
+    case REQUEST_SENT:
+        cout<<"Solicitud enviada a "<<user->getUserName()<<endl;
+        break;
+    case REQUEST_TO_MYSELF:
+        cout<<"No te puedes enviar una solicitud a ti mismo"<<endl;
+        break;
+    case REQUEST_ALREADY_FRIENDS:
+        cout<<"Ya eres amigo de "<<user->getUserName()<<endl;
+        break;
+    case REQUEST_ALREADY_SENT:
+        cout<<"Ya le habias enviado una solicitud"<<endl;
+        break;
+    case REQUEST_PENDING_FROM_THEM:
+        cout<<user->getUserName()<<" ya te envio una solicitud, aceptala en la opcion 2"<<endl;
+        break;
+    }
+}
+
+void Menu::acceptRequestsMenu(){
+    const DynamicList<User*>& requests = platform.getCurrentUser()->getReceivedRequests();
+
+    if(requests.getSize() == 0){
+        cout<<"No tienes solicitudes pendientes"<<endl;
+        return;
+    }
+
+    cout<<"Solicitudes recibidas:"<<endl;
+    for(int i = 0; i < requests.getSize(); i++){
+        cout<<i + 1<<". "<<*requests[i]<<endl;
+    }
+    cout<<"0. Volver"<<endl;
+    cout<<"> ";
+    int selected = readOption(0, requests.getSize());
+    if(selected == 0) return;
+
+    User* sender = requests[selected - 1];
+
+    cout<<"1. Aceptar"<<endl;
+    cout<<"2. Rechazar"<<endl;
+    cout<<"0. Cancelar"<<endl;
+    cout<<"> ";
+    int action = readOption(0, 2);
+
+    if(action == 1){
+        platform.acceptRequest(sender);
+        cout<<"Ahora eres amigo de "<<sender->getUserName()<<endl;
+    }
+    else if(action == 2){
+        platform.rejectRequest(sender);
+        cout<<"Solicitud de "<<sender->getUserName()<<" rechazada"<<endl;
+    }
 }
 

@@ -16,6 +16,8 @@ private:
     void showCarousel(Album* album);
     UdeaBook& platform;
     bool loginScreen();
+    void sendRequestMenu();
+    void acceptRequestsMenu();
 };
 
 #endif // MENU_H
