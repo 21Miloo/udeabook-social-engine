@@ -113,7 +113,6 @@ void Menu::visitProfileMenu(){
     }
 
 
-    // los albumes ya estan contados en la memoria de la plataforma, aqui solo lo propio de esta funcionalidad
     reportResources(sizeof(userName) + userName.capacity() + sizeof(option) + sizeof(visited) + sizeof(me)
                     + sizeof(isOwner) + sizeof(isFriend) + sizeof(hidden) + visibles.calculateMemory());
 }
@@ -192,20 +191,33 @@ void Menu::showCarousel(Album* album){
 }
 
 bool Menu::loginScreen(){
+    const int MAX_ATTEMPTS = 3;
     string userName;
     string password;
-    cout<<endl<<"==== Iniciar sesion ===="<<endl;
-    cout<<"Usuario: ";
-    cin>>userName;
-    cout<<"Contrasena: ";
-    cin>>password;
+    bool logged = false;
+    int attempt = 0;
 
-    if(platform.login(userName, password)){
-        cout<<"Bienvenido, "<<platform.getCurrentUser()->getUserName()<<endl;
-        return true;
+    while(attempt < MAX_ATTEMPTS && !logged){
+        ResourceMeter::add();
+        attempt++;
+        cout<<endl<<"==== Iniciar sesion ===="<<endl;
+        cout<<"Usuario: ";
+        cin>>userName;
+        cout<<"Contrasena: ";
+        cin>>password;
+
+        logged = platform.login(userName, password);
+        if(!logged){
+            cout<<"Usuario o contrasena incorrectos ("<<MAX_ATTEMPTS - attempt<<" intento(s) restante(s))"<<endl;
+        }
     }
-    cout<<"Usuario o contrasena incorrectos"<<endl;
-    return false;
+
+    if(logged) cout<<"Bienvenido, "<<platform.getCurrentUser()->getUserName()<<endl;
+    else cout<<"Se agotaron los intentos"<<endl;
+
+    reportResources(sizeof(userName) + userName.capacity() + sizeof(password) + password.capacity()
+                    + sizeof(logged) + sizeof(attempt));
+    return logged;
 }
 
 
@@ -319,6 +331,7 @@ void Menu::suggestionsMenu(){
 }
 
 void Menu::showBestFriends(){
+    ResourceMeter::reset();
     ResourceMeter::registerExternal("mt19937 de <random> (seleccion aleatoria de amigos)");
     DynamicList<User*> bestFriends;
     platform.getBestFriends(bestFriends);
@@ -484,8 +497,8 @@ bool Menu::readDate(const string& text, bool endOfDay, Date& date){
     return true;
 }
 
-// Muestra las metricas de la funcionalidad que acaba de terminar.
-// La memoria es la de TODA la plataforma en este momento + el menu + las variables locales de la funcionalidad
+// Muestra las metricas de la opcion que acaba de terminar.
+// La memoria es la de TODA la plataforma en este momento + el menu + las variables locales de la opcion
 void Menu::reportResources(size_t localMemory){
     ResourceMeter::report(platform.calculateTotalMemory() + sizeof(*this) + localMemory);
 }
