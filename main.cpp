@@ -8,7 +8,7 @@ int main()
 {
     UdeaBook platform("data/", "/users/udeabook");
 
-    ResourceMeter::reset(); // la funcionalidad I empieza con la carga de datos
+    ResourceMeter::reset(); // la medicion empieza con la carga de datos
     if (!platform.loadData()) {
         cout << "No se pudieron cargar los datos" << endl;
         return 1;
