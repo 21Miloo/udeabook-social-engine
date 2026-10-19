@@ -48,6 +48,9 @@ public:
     bool operator<=(const Date& other) const;
     bool operator==(const Date& other) const;
 
+    static Date now();               // fecha y hora actual
+    static bool isLeapYear(int y);   // true si el año es bisiesto
+
     friend ostream& operator<<(ostream& out, const Date& date); // Para imprimir y guardar en archivo
 
 
