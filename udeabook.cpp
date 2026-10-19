@@ -13,6 +13,9 @@ UdeaBook::~UdeaBook(){
     for (int i = 0; i < users.getSize(); i++) {
         delete users[i]; // UdeaBook creo cada usuario con new, entonces UdeaBook los borra
     }
+    for (int i = 0; i < messages.getSize(); i++) {
+        delete messages[i]; // los mensajes tambien los crea UdeaBook
+    }
     // la lista y la matriz se liberan solas con sus propios destructores
 }
 
@@ -133,6 +136,7 @@ bool UdeaBook::loadData(){
     if (!loadUsers()) return false; // sin usuarios no se puede cargar nada mas
     if (!loadFriendships()) return false;
     if (!loadRequests()) return false;
+    if (!loadMessages()) return false;
     return true;
 }
 
@@ -387,7 +391,143 @@ bool UdeaBook::rejectRequest(User* from){
     return true;
 }
 
+// Metodo que guarda friendships.txt
+bool UdeaBook::saveFriendships() const {
 
+    ofstream file(dataPath + "friendships.txt"); // ofstream borra el archivo y lo escribe desde cero
+    if (!file.is_open()) return false;
 
+    for (int i = 0; i < users.getSize(); i++) {
+        const DynamicList<User*>& friends = users[i]->getFriends();
 
+        for (int j = 0; j < friends.getSize(); j++) {
+            if (friends[j]->getIndex() > i) { // cada pareja una sola vez: solo cuando el amigo va despues de mi
+                file << users[i]->getUserName() << "|" << friends[j]->getUserName() << '\n';
+            }
+        }
+    }
+    return true;
+}
 
+// Metodo que guarda requests.txt
+bool UdeaBook::saveRequests() const {
+
+    ofstream file(dataPath + "requests.txt");
+    if (!file.is_open()) return false;
+
+    for (int i = 0; i < users.getSize(); i++) {
+        const DynamicList<User*>& received = users[i]->getReceivedRequests();
+
+        for (int j = 0; j < received.getSize(); j++) {
+            file << received[j]->getUserName() << "|" << users[i]->getUserName() << '\n'; // formato: sender|receiver
+        }
+    }
+    return true;
+}
+
+// Metodo que guarda todos los datos que pueden cambiar durante la ejecucion
+bool UdeaBook::saveData() const {
+
+    bool ok = true;
+
+    if (!saveFriendships()) {
+        cout << "No se pudo guardar " << dataPath << "friendships.txt" << endl;
+        ok = false;
+    }
+    if (!saveRequests()) {
+        cout << "No se pudo guardar " << dataPath << "requests.txt" << endl;
+        ok = false; // seguimos intentando con los demas aunque uno falle
+    }
+    if (!saveMessages()) {
+        cout << "No se pudo guardar " << dataPath << "messages.txt" << endl;
+        ok = false;
+    }
+    return ok;
+}
+
+// Metodo que carga messages.txt
+bool UdeaBook::loadMessages(){
+
+    ifstream file(dataPath + "messages.txt");
+    if (!file.is_open()) return true; // sin archivo no hay mensajes
+
+    string line;
+    string fields[5];
+    while (getline(file, line)) {
+        cleanLine(line);
+        if (line.empty() || splitLine(line, fields, 5) != 5) continue; // el texto es el ultimo campo, puede tener |
+
+        User* sender = findUser(fields[0]);
+        User* receiver = findUser(fields[1]);
+        if (sender == nullptr || receiver == nullptr || sender == receiver) continue;
+        if (!Message::isValidText(fields[4])) continue; // vacio o mas de 512 caracteres
+
+        Message* m = new Message(sender, receiver, fields[4], Date(fields[2]));
+        if (fields[3] == "1") m->markAsRead(); // el constructor lo crea como no leido
+        messages.add(m); // el archivo viene ordenado por fecha, la lista queda ordenada igual
+    }
+    return true;
+}
+
+// Metodo que guarda messages.txt
+bool UdeaBook::saveMessages() const {
+
+    ofstream file(dataPath + "messages.txt");
+    if (!file.is_open()) return false;
+
+    for (int i = 0; i < messages.getSize(); i++) {
+        const Message* m = messages[i];
+        file << m->getSender()->getUserName() << "|" << m->getReceiver()->getUserName() << "|"
+             << m->getSentDate() << "|" << (m->isRead() ? 1 : 0) << "|" << m->getText() << '\n'; // el texto de ultimo
+    }
+    return true;
+}
+
+// Metodo que envia un mensaje del usuario actual a "to"
+MessageResult UdeaBook::sendMessage(User* to, const string& text){
+
+    if (!areFriends(currentUser, to)) return MESSAGE_NOT_FRIENDS; // solo se puede escribir a los amigos
+    if (!Message::isValidText(text)) return MESSAGE_INVALID_TEXT;  // vacio o mas de 512 caracteres
+
+    messages.add(new Message(currentUser, to, text, Date::now())); // el nuevo es el mas reciente, la lista sigue ordenada
+    return MESSAGE_SENT;
+}
+
+// Metodo que llena res con la conversacion entre el usuario actual y other, y marca como leidos los que recibi
+void UdeaBook::getConversation(User* other, DynamicList<Message*>& res){
+
+    User* me = currentUser;
+
+    for (int i = 0; i < messages.getSize(); i++) {
+        Message* m = messages[i];
+
+        bool sentByMe = (m->getSender() == me && m->getReceiver() == other);
+        bool sentToMe = (m->getSender() == other && m->getReceiver() == me);
+
+        if (sentByMe || sentToMe) {
+            res.add(m); // salen en orden de fecha porque la lista ya esta ordenada
+            if (sentToMe) m->markAsRead(); // si los estoy viendo, ya los lei
+        }
+    }
+}
+
+// Metodo que cuenta cuantos mensajes sin leer le ha enviado "from" al usuario actual
+int UdeaBook::countUnreadFrom(User* from) const {
+
+    int count = 0;
+    for (int i = 0; i < messages.getSize(); i++) {
+        const Message* m = messages[i];
+        if (m->getSender() == from && m->getReceiver() == currentUser && !m->isRead()) count++;
+    }
+    return count;
+}
+
+// Metodo que cuenta todos los mensajes sin leer del usuario actual
+int UdeaBook::countUnreadMessages() const {
+
+    int count = 0;
+    for (int i = 0; i < messages.getSize(); i++) {
+        if (messages[i]->getReceiver() == currentUser && !messages[i]->isRead()) count++;
+    }
+    return count;
+}

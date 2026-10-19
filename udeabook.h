@@ -6,6 +6,7 @@
 #include "adjacencymatrix.h"
 #include "user.h"
 #include "suggestion.h"
+#include "message.h"
 #include <random>
 
 using namespace std;
@@ -13,12 +14,16 @@ using namespace std;
 // Resultado de enviar una solicitud de amistad, los vamos a restringir a un enum
 enum RequestResult { REQUEST_SENT, REQUEST_TO_MYSELF, REQUEST_ALREADY_FRIENDS, REQUEST_ALREADY_SENT, REQUEST_PENDING_FROM_THEM };
 
+// Resultado de enviar un mensaje
+enum MessageResult { MESSAGE_SENT, MESSAGE_NOT_FRIENDS, MESSAGE_INVALID_TEXT };
+
 class UdeaBook{
 
 private:
 
     DynamicList<User*> users;     // todos los usuarios, ordenados por userName. UdeaBook es el dueño
     AdjacencyMatrix friendships;  // friendships[i][j] es true si los usuarios i y j son amigos
+    DynamicList<Message*> messages; // todos los mensajes ordenados por fecha. UdeaBook es el dueño
     User* currentUser;            // el usuario que inicio sesion, nullptr si nadie
     string dataPath;              // carpeta donde estan los .txt (ej: "data/")
     string basePath;              // ruta fija de las fotos (ej: "/users/udeabook")
@@ -33,6 +38,12 @@ private:
     bool loadUsers();
     bool loadFriendships();
     bool loadRequests();
+    bool loadMessages();
+
+    // Guardado de cada archivo
+    bool saveFriendships() const;
+    bool saveRequests() const;
+    bool saveMessages() const;
 
     // marca la amistad de la matriz y en las 2 listas
     void makeFriends(User* a, User* b);
@@ -58,6 +69,7 @@ public:
     UdeaBook& operator=(const UdeaBook& other) = delete; // (copiarla causaria double free de los usuarios)
 
     bool loadData(); // carga todos los archivos al iniciar
+    bool saveData() const; // guarda los cambios al salir
 
     // Sesion
     bool login(const string& userName, const string& password);
@@ -82,6 +94,12 @@ public:
     RequestResult sendRequest(User* to);
     bool acceptRequest(User* from);
     bool rejectRequest(User* from);
+
+    // Mensajes
+    MessageResult sendMessage(User* to, const string& text);
+    void getConversation(User* other, DynamicList<Message*>& res);
+    int countUnreadFrom(User* from) const;
+    int countUnreadMessages() const;
 
     // sugerencias de amistad
     void getSuggestions(int f, DynamicList<Suggestion>& res) const;

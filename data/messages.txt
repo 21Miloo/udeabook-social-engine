@@ -1,0 +1,4 @@
+luis_p|ana_m|2025-04-01 10:15|1|Hola Ana, como vas?
+ana_m|luis_p|2025-04-01 10:20|1|Bien! y tu?
+luis_p|ana_m|2025-04-02 09:00|0|Nos vemos | manana
+sofi_r|luis_p|2025-04-03 18:30|0|Hola Luis
