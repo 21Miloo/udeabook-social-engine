@@ -34,6 +34,10 @@ private:
     bool loadFriendships();
     bool loadRequests();
 
+    // Guardado de cada archivo
+    bool saveFriendships() const;
+    bool saveRequests() const;
+
     // marca la amistad de la matriz y en las 2 listas
     void makeFriends(User* a, User* b);
 
@@ -58,6 +62,7 @@ public:
     UdeaBook& operator=(const UdeaBook& other) = delete; // (copiarla causaria double free de los usuarios)
 
     bool loadData(); // carga todos los archivos al iniciar
+    bool saveData() const; // guarda los cambios al salir
 
     // Sesion
     bool login(const string& userName, const string& password);

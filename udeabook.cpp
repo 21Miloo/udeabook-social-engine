@@ -387,7 +387,52 @@ bool UdeaBook::rejectRequest(User* from){
     return true;
 }
 
+// Metodo que guarda friendships.txt
+bool UdeaBook::saveFriendships() const {
 
+    ofstream file(dataPath + "friendships.txt"); // ofstream borra el archivo y lo escribe desde cero
+    if (!file.is_open()) return false;
 
+    for (int i = 0; i < users.getSize(); i++) {
+        const DynamicList<User*>& friends = users[i]->getFriends();
 
+        for (int j = 0; j < friends.getSize(); j++) {
+            if (friends[j]->getIndex() > i) { // cada pareja una sola vez: solo cuando el amigo va despues de mi
+                file << users[i]->getUserName() << "|" << friends[j]->getUserName() << '\n';
+            }
+        }
+    }
+    return true;
+}
 
+// Metodo que guarda requests.txt
+bool UdeaBook::saveRequests() const {
+
+    ofstream file(dataPath + "requests.txt");
+    if (!file.is_open()) return false;
+
+    for (int i = 0; i < users.getSize(); i++) {
+        const DynamicList<User*>& received = users[i]->getReceivedRequests();
+
+        for (int j = 0; j < received.getSize(); j++) {
+            file << received[j]->getUserName() << "|" << users[i]->getUserName() << '\n'; // formato: sender|receiver
+        }
+    }
+    return true;
+}
+
+// Metodo que guarda todos los datos que pueden cambiar durante la ejecucion
+bool UdeaBook::saveData() const {
+
+    bool ok = true;
+
+    if (!saveFriendships()) {
+        cout << "No se pudo guardar " << dataPath << "friendships.txt" << endl;
+        ok = false;
+    }
+    if (!saveRequests()) {
+        cout << "No se pudo guardar " << dataPath << "requests.txt" << endl;
+        ok = false; // seguimos intentando con los demas aunque uno falle
+    }
+    return ok;
+}
