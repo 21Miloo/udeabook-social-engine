@@ -7,9 +7,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(udeabook main.cpp
     DynamicList.h
+    photo.h photo.cpp
+    privacy.h
+    album.h album.cpp
+    menu.h menu.cpp
+    resourcemeter.h resourcemeter.cpp
     date.h date.cpp
     adjacencymatrix.h adjacencymatrix.cpp
-    user.h user.cpp)
+    user.h user.cpp
+    message.h message.cpp
+    suggestion.h suggestion.cpp
+    udeabook.h udeabook.cpp
+)
 
 include(GNUInstallDirs)
 install(TARGETS udeabook

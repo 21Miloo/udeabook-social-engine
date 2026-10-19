@@ -1,0 +1,5 @@
+ana_m|luis_p
+ana_m|carlos_p
+luis_p|sofi_r
+carlos_p|sofi_r
+luis_p|maria_g

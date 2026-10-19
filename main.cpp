@@ -1,9 +1,10 @@
 #include <iostream>
-
+#include "menu.h"
 using namespace std;
 
 int main()
 {
-    cout << "UdeaBook" << endl;
+    Menu menu;
+    menu.run();
     return 0;
 }

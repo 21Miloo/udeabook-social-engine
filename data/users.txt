@@ -1,0 +1,6 @@
+5
+ana_m|ana123|ana@mail.com|2004-11-02|Medellin|Colombia|2025-01-10 08:30
+carlos_p|carlos123|carlos@mail.com|2002-07-21|Cali|Colombia|2025-03-15 12:00
+luis_p|luis123|luis@mail.com|2003-05-14|Bogota|Colombia|2025-02-01 19:05
+maria_g|maria123|maria@mail.com|2005-01-30|Lima|Peru|2025-04-20 09:45
+sofi_r|sofi123|sofi@mail.com|2004-09-09|Medellin|Colombia|2025-05-05 16:20
