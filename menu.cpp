@@ -17,7 +17,7 @@ void Menu::run(){
         ResourceMeter::add();
         cout<<endl<<"==== Bienvenido a UdeaBook ===="<<endl;
         cout<<"1. Administrar amistades"<<endl;
-        cout<<"2. Visitar perfil de un usuario"<<endl;
+        cout<<"2. Visitar perfil de un amigo"<<endl;
         cout<<"3. Ver sugerencias de amistad"<<endl;
         cout<<"4. Administrar mensajes"<<endl;
         cout<<"0. Salir"<<endl;
@@ -73,22 +73,22 @@ void Menu::visitProfileMenu(){
     }
 
     User* me = platform.getCurrentUser();
-    bool isOwner = (visited == me);
-    bool isFriend = !isOwner && platform.areFriends(me, visited);
+    if(!platform.areFriends(me, visited)){
+        cout<<"Solo puedes visitar el perfil de tus amigos"<<endl;
+        reportResources(sizeof(userName) + userName.capacity() + sizeof(visited) + sizeof(me));
+        return;
+    }
 
-    cout<<"Visitando perfil de "<<*visited;
-    if(isOwner) cout<<" (tu perfil)";
-    else if(isFriend) cout<<" (amigo)";
-    cout<<endl;
+    cout<<"Visitando perfil de "<<*visited<<endl;
     cout<<"Foto de perfil: "<<visited->getProfilePhotoPath()<<endl;
 
-    // solo se muestran los albumes que la privacidad permite ver
+    // como es un amigo, ve los albumes publicos y los de amigos, nunca los privados
     const DynamicList<Album*>& albums = visited->getAlbums();
     DynamicList<Album*> visibles;
 
     for(int i = 0; i < albums.getSize(); i++){
         ResourceMeter::add();
-        if(albums[i]->isVisibleTo(isOwner, isFriend)) visibles.add(albums[i]);
+        if(albums[i]->isVisibleTo(false, true)) visibles.add(albums[i]);
     }
     int hidden = albums.getSize() - visibles.getSize();
     if(hidden > 0) cout<<hidden<<" album(es) oculto(s) por privacidad"<<endl;
@@ -114,7 +114,7 @@ void Menu::visitProfileMenu(){
 
 
     reportResources(sizeof(userName) + userName.capacity() + sizeof(option) + sizeof(visited) + sizeof(me)
-                    + sizeof(isOwner) + sizeof(isFriend) + sizeof(hidden) + visibles.calculateMemory());
+                    + sizeof(hidden) + visibles.calculateMemory());
 }
 
 void Menu::manageFriendshipsMenu(){
@@ -212,12 +212,15 @@ bool Menu::loginScreen(){
         }
     }
 
-    if(logged) cout<<"Bienvenido, "<<platform.getCurrentUser()->getUserName()<<endl;
-    else cout<<"Se agotaron los intentos"<<endl;
+    if(logged){
+        cout<<"Bienvenido, "<<platform.getCurrentUser()->getUserName()<<endl;
+        return true; // el reporte sale despues de mostrar los mejores amigos
+    }
 
+    cout<<"Se agotaron los intentos"<<endl;
     reportResources(sizeof(userName) + userName.capacity() + sizeof(password) + password.capacity()
                     + sizeof(logged) + sizeof(attempt));
-    return logged;
+    return false;
 }
 
 
@@ -331,7 +334,6 @@ void Menu::suggestionsMenu(){
 }
 
 void Menu::showBestFriends(){
-    ResourceMeter::reset();
     ResourceMeter::registerExternal("mt19937 de <random> (seleccion aleatoria de amigos)");
     DynamicList<User*> bestFriends;
     platform.getBestFriends(bestFriends);

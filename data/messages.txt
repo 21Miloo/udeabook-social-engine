@@ -2998,23 +2998,23 @@ simon_correa|mariana_arango|2025-07-27 01:55|1|Ya hiciste el taller de Informati
 manuela_rojas|jeronimo_alvarez|2025-07-27 03:30|1|Bien y tu?
 tomas_quintero|mariana_agudelo|2025-07-27 05:42|1|Nos vemos manana en la U
 sara_lopez|carolina_mejia|2025-07-27 07:16|0|Gracias | te debo una
-maria_giraldo|camilo_lopez|2025-07-27 07:49|1|Hola, como vas?
-camilo_lopez|maria_giraldo|2025-07-27 08:48|1|Hola, como vas?
-maria_giraldo|camilo_lopez|2025-07-27 09:20|0|Hola, como vas?
-camilo_lopez|maria_giraldo|2025-07-27 09:28|1|A que hora es el parcial?
-samuel_herrera|camilo_lopez|2025-07-27 10:15|1|Me pasas los apuntes de calculo?
-camilo_lopez|samuel_herrera|2025-07-27 10:25|1|Hola, como vas?
-samuel_herrera|camilo_lopez|2025-07-27 10:48|0|Ya hiciste el taller de Informatica II?
-camilo_lopez|samuel_herrera|2025-07-27 11:36|1|Viste el partido?
-sebastian_ramirez|camilo_lopez|2025-07-27 12:15|1|Feliz cumpleanos!
-camilo_lopez|sebastian_ramirez|2025-07-27 12:50|1|Listo, hablamos luego
-sebastian_ramirez|camilo_lopez|2025-07-27 13:09|0|Nos vemos manana en la U
-camilo_lopez|sebastian_ramirez|2025-07-27 13:34|1|Hola, como vas?
-sara_gomez|camilo_lopez|2025-07-27 13:49|1|Viste el partido?
-camilo_lopez|sara_gomez|2025-07-27 14:30|1|Me pasas los apuntes de calculo?
-sara_gomez|camilo_lopez|2025-07-27 15:07|0|Me pasas los apuntes de calculo?
-camilo_lopez|sara_gomez|2025-07-27 15:26|1|Ya hiciste el taller de Informatica II?
-paula_martinez|camilo_lopez|2025-07-27 16:13|1|A que hora es el parcial?
-camilo_lopez|paula_martinez|2025-07-27 16:45|1|Hola, como vas?
-paula_martinez|camilo_lopez|2025-07-27 17:28|0|Jajaja
-camilo_lopez|paula_martinez|2025-07-27 18:02|1|Ya hiciste el taller de Informatica II?
+maria_giraldo|camilo_lopez|2025-07-30 15:05|1|Hola, como vas?
+camilo_lopez|maria_giraldo|2025-08-03 17:39|1|Hola, como vas?
+maria_giraldo|camilo_lopez|2025-08-07 00:35|0|Hola, como vas?
+camilo_lopez|maria_giraldo|2025-08-09 13:33|1|A que hora es el parcial?
+samuel_herrera|camilo_lopez|2025-08-13 07:47|1|Me pasas los apuntes de calculo?
+camilo_lopez|samuel_herrera|2025-08-15 21:58|1|Hola, como vas?
+samuel_herrera|camilo_lopez|2025-08-18 22:17|0|Ya hiciste el taller de Informatica II?
+camilo_lopez|samuel_herrera|2025-08-22 16:42|1|Viste el partido?
+sebastian_ramirez|camilo_lopez|2025-08-26 04:46|1|Feliz cumpleanos!
+camilo_lopez|sebastian_ramirez|2025-08-29 13:49|1|Listo, hablamos luego
+sebastian_ramirez|camilo_lopez|2025-09-01 10:54|0|Nos vemos manana en la U
+camilo_lopez|sebastian_ramirez|2025-09-04 12:48|1|Hola, como vas?
+sara_gomez|camilo_lopez|2025-09-07 07:16|1|Viste el partido?
+camilo_lopez|sara_gomez|2025-09-10 20:47|1|Me pasas los apuntes de calculo?
+sara_gomez|camilo_lopez|2025-09-14 07:26|0|Me pasas los apuntes de calculo?
+camilo_lopez|sara_gomez|2025-09-17 04:16|1|Ya hiciste el taller de Informatica II?
+paula_martinez|camilo_lopez|2025-09-20 22:23|1|A que hora es el parcial?
+camilo_lopez|paula_martinez|2025-09-24 05:10|1|Hola, como vas?
+paula_martinez|camilo_lopez|2025-09-27 19:56|0|Jajaja
+camilo_lopez|paula_martinez|2025-10-01 04:03|1|Ya hiciste el taller de Informatica II?

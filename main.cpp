@@ -13,6 +13,9 @@ int main()
         cout << "No se pudieron cargar los datos" << endl;
         return 1;
     }
+    ResourceMeter::report(platform.calculateTotalMemory()); // consumo de la carga de datos
+
+    ResourceMeter::reset(); // el login y los mejores amigos se miden juntos
 
     Menu menu(platform);
 
