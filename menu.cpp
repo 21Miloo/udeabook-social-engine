@@ -3,13 +3,15 @@
 #include "resourcemeter.h"
 #include <iostream>
 #include <string>
+#include "udeabook.h"
 
 using namespace std;
 
-Menu::Menu() {}
+Menu::Menu(UdeaBook& platform):platform(platform){}
 
 void Menu::run(){
     short int option;
+    if (!loginScreen()) return;
     do{
         cout<<endl<<"==== Bienvenido a UdeaBook ===="<<endl;
         cout<<"1. Administrar amistades"<<endl;
@@ -186,3 +188,21 @@ void Menu::showCarousel(Album* album){
         }
     }while(option != 0);
 }
+
+bool Menu::loginScreen(){
+    string userName;
+    string password;
+    cout<<endl<<"==== Iniciar sesion ===="<<endl;
+    cout<<"Usuario: ";
+    cin>>userName;
+    cout<<"Contrasena: ";
+    cin>>password;
+
+    if(platform.login(userName, password)){
+        cout<<"Bienvenido, "<<platform.getCurrentUser()->getUserName()<<endl;
+        return true;
+    }
+    cout<<"Usuario o contrasena incorrectos"<<endl;
+    return false;
+}
+

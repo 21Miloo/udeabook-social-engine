@@ -2,11 +2,11 @@
 #define MENU_H
 
 class Album;
-
+class UdeaBook;
 class Menu
 {
 public:
-    Menu();
+    Menu(UdeaBook& platform);
     void run();
 
 private:
@@ -14,6 +14,8 @@ private:
     void visitProfileMenu();
     void manageFriendshipsMenu();
     void showCarousel(Album* album);
+    UdeaBook& platform;
+    bool loginScreen();
 };
 
 #endif // MENU_H
