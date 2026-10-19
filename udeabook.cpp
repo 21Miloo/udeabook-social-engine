@@ -66,7 +66,7 @@ bool UdeaBook::loadUsers(){
     int total = stoi(line); // la primera linea dice cuantos usuarios hay
 
     users = DynamicList<User*>(total);       // creamos la lista y la matriz del tamano exacto
-    friendships = AdjacencyMatrix(total);    // asi nunca tienen que hacer resize durante la carga
+    friendships.reserve(total);              // reservamos el espacio de una vez, sin crear una matriz temporal
 
     string fields[7];
     while (getline(file, line)) {
