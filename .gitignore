@@ -8,3 +8,6 @@ CMakeLists.txt.user*
 
 # Archivos temporales de Word
 ~$*
+
+# Ejecutable del generador de datos
+*.exe
