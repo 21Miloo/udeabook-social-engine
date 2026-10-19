@@ -277,9 +277,10 @@ void writeMessages(const string& path, char** rel){
     }
 
     // conversaciones del usuario del video con sus primeros 5 amigos: al final para que sean las mas recientes
+    // entre mensaje y mensaje pasan de 2.4 a 4 dias, asi quedan repartidas en mas de 6 semanas
     for (int f = 1; f <= 5; f++) {
         for (int k = 0; k < 4; k++) {
-            addMinutes(y, m, d, h, min, randomInt(5, 60));
+            addMinutes(y, m, d, h, min, randomInt(3500, 6000));
             bool fromDemo = (k % 2 == 1);
             int sender = fromDemo ? 0 : f;
             int receiver = fromDemo ? f : 0;
