@@ -18,6 +18,7 @@ public:
     bool operator<(const Suggestion& other) const;
     bool operator>(const Suggestion& other) const;
     friend ostream& operator<<(ostream& out, const Suggestion& suggestion);
+    size_t calculateMemory() const;
 private:
     User* user;
     int commonFriends;

@@ -1,6 +1,7 @@
 #ifndef DYNAMICLIST_H
 #define DYNAMICLIST_H
 #include <stdexcept>
+#include "resourcemeter.h"
 
 template <typename T> // <- Le dice a C++ que voy a crear una plantilla que puede trabajar con diferentes tipos de datos
 class DynamicList{
@@ -60,6 +61,7 @@ DynamicList<T>:: DynamicList(const DynamicList<T>& other){
     data = new T[capacity];
 
     for (int i = 0; i < size; ++i) {
+        ResourceMeter::add();
         data[i] = other.data[i];
     }
 
@@ -79,6 +81,7 @@ DynamicList<T> &DynamicList<T>:: operator=(const DynamicList<T>& other){
     data = new T[capacity];
 
     for (int i = 0; i < size; ++i) {
+        ResourceMeter::add();
         data[i] = other.data[i];
     }
 
@@ -100,6 +103,7 @@ void DynamicList<T>:: resize(){
     T* newData = new T[newCapacity]; // Es un puntero que apunta a un arreglo de elementos T. Si T es int, es un arreglo de int
 
     for (int i = 0; i < size; ++i) {
+        ResourceMeter::add();
         newData[i] = data[i];   // llenamos el nuevo arreglo con los datos del arreglo viejo
     }
 
@@ -162,6 +166,7 @@ void DynamicList<T>::removeAt(int index){
     }
 
     for (int i = index; i < size - 1; i++) {
+        ResourceMeter::add();
         data[i] = data[i + 1]; // corremos los elementos a la izquierda, el que se quita queda pisado por el siguiente
     }
     size--; // la ultima casilla queda como basura, ya no se puede acceder a ella
@@ -180,6 +185,7 @@ void DynamicList<T>::insertAt(int index, const T& element)
     }
 
     for (int i = size; i > index; i--) {
+        ResourceMeter::add();
         data[i] = data[i - 1]; // corremos a la derecha empezando por el final para no pisar datos antes de moverlos
     }
 
@@ -192,6 +198,7 @@ template <typename T>
 int DynamicList<T>:: indexOf(const T& element) const {
 
     for (int i = 0; i < size; ++i) {
+        ResourceMeter::add();
         if (data[i] == element) return i; // apenas lo encontramos retornamos, no tiene sentido seguir buscando
     }
 

@@ -5,6 +5,32 @@ Album::Album() : name(""), path(""), privacy(PRIVATE), owner(nullptr) {}
 
 Album::Album(const string& name, const string& path, Privacy privacy, User* owner): name(name), path(path), privacy(privacy), owner(owner){}
 
+Album::Album(const Album& other)
+    : name(other.name), path(other.path), privacy(other.privacy), owner(other.owner)
+{
+    for(int i = 0; i < other.photos.getSize(); i++){
+        photos.add(new Photo(*other.photos[i]));
+    }
+}
+
+Album& Album::operator=(const Album& other){
+    if(this == &other) return *this;
+
+    for(int i = 0; i < photos.getSize(); i++){
+        delete photos[i];
+    }
+    photos.clear();
+
+    name = other.name;
+    path = other.path;
+    privacy = other.privacy;
+    owner = other.owner;
+    for(int i = 0; i < other.photos.getSize(); i++){
+        photos.add(new Photo(*other.photos[i]));
+    }
+    return *this;
+}
+
 //destructor
 Album::~Album() {
     for(int i=0; i<photos.getSize();i++){
@@ -52,7 +78,6 @@ size_t Album::calculateMemory() const
 {
     size_t memory = sizeof(*this) + name.capacity() + path.capacity() + photos.calculateMemory() - sizeof(photos);
     for(int i = 0; i < photos.getSize(); i++){
-        ResourceMeter::add();
         memory = memory + photos[i]->calculateMemory();
     }
     return memory;

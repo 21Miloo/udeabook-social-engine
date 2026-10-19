@@ -27,3 +27,7 @@ ostream& operator<<(ostream& out, const Suggestion& suggestion){
     out << " (" << suggestion.commonFriends << " amigos en comun)";
     return out;
 }
+
+size_t Suggestion::calculateMemory() const{
+    return sizeof(*this); // el usuario al que apunta no es de la sugerencia
+}

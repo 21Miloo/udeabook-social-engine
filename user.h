@@ -79,6 +79,8 @@ public:
     friend ostream& operator<<(ostream& out, const User& user);
 
 
+    size_t calculateMemory() const; // bytes del usuario: objeto + textos + listas (no cuenta a los otros usuarios)
+
 };
 
 #endif // USER_H
